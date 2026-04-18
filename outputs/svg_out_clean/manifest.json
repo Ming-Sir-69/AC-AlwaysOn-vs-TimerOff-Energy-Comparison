@@ -1,0 +1,122 @@
+[
+  {
+    "index": 1,
+    "id": "F01",
+    "name": "牛顿冷却定律微分形式",
+    "tex": "\\frac{dT}{dt} = -\\frac{1}{\\tau_k}(T - T_{\\text{out}})",
+    "svg": "formula_01_F01.svg",
+    "png": "formula_01_F01.png"
+  },
+  {
+    "index": 2,
+    "id": "F02",
+    "name": "关机后室温回升解析解",
+    "tex": "T(t) = T_{\\text{out}} - (T_{\\text{out}} - T_{\\text{set}}) \\cdot e^{-t/\\tau_k}",
+    "svg": "formula_02_F02.svg",
+    "png": "formula_02_F02.png"
+  },
+  {
+    "index": 3,
+    "id": "F03",
+    "name": "建筑热时间常数",
+    "tex": "\\tau_k = \\frac{C_{\\text{th}}}{UA}",
+    "svg": "formula_03_F03.svg",
+    "png": "formula_03_F03.png"
+  },
+  {
+    "index": 4,
+    "id": "F04",
+    "name": "恒温维持功率",
+    "tex": "P_{\\text{idle}} = \\frac{UA \\cdot (T_{\\text{out}} - T_{\\text{set}})}{\\text{COP}}",
+    "svg": "formula_04_F04.svg",
+    "png": "formula_04_F04.png"
+  },
+  {
+    "index": 5,
+    "id": "F05",
+    "name": "方案A_24h总耗电",
+    "tex": "E_A = P_{\\text{idle}} \\times 24",
+    "svg": "formula_05_F05.svg",
+    "png": "formula_05_F05.png"
+  },
+  {
+    "index": 6,
+    "id": "F06",
+    "name": "回家后室温",
+    "tex": "T_{\\text{return}} = T_{\\text{out}} - (T_{\\text{out}} - T_{\\text{set}}) \\cdot e^{-t_{\\text{off}}/\\tau_k}",
+    "svg": "formula_06_F06.svg",
+    "png": "formula_06_F06.png"
+  },
+  {
+    "index": 7,
+    "id": "F07",
+    "name": "急冷耗电量",
+    "tex": "E_{\\text{cool}} = \\frac{C_{\\text{th}} \\cdot (T_{\\text{return}} - T_{\\text{set}})}{0.6 \\cdot \\text{COP}}",
+    "svg": "formula_07_F07.svg",
+    "png": "formula_07_F07.png"
+  },
+  {
+    "index": 8,
+    "id": "F08",
+    "name": "方案B总耗电",
+    "tex": "E_B = P_{\\text{max}} \\times t_{\\text{cool}} + P_{\\text{idle}} \\times t_{\\text{maint}}",
+    "svg": "formula_08_F08.svg",
+    "png": "formula_08_F08.png"
+  },
+  {
+    "index": 9,
+    "id": "F08b",
+    "name": "恒温维持阶段时长",
+    "tex": "t_{\\text{maint}} = 24 - t_{\\text{off}} - t_{\\text{cool}}",
+    "svg": "formula_09_F08b.svg",
+    "png": "formula_09_F08b.png"
+  },
+  {
+    "index": 10,
+    "id": "F09",
+    "name": "临界外出时长超越方程",
+    "tex": "\\tau_{\\text{out}}^* = \\tau_k \\left(1 - e^{-\\tau_{\\text{out}}^*/\\tau_k}\\right)",
+    "svg": "formula_10_F09.svg",
+    "png": "formula_10_F09.png"
+  },
+  {
+    "index": 11,
+    "id": "F10",
+    "name": "节能比例",
+    "tex": "\\eta = \\frac{E_A - E_B}{E_A} \\times 100\\%",
+    "svg": "formula_11_F10.svg",
+    "png": "formula_11_F10.png"
+  },
+  {
+    "index": 12,
+    "id": "F11",
+    "name": "部分负荷系数PLF",
+    "tex": "\\text{PLF} = 1 - c_d \\cdot (1 - \\text{PLR})",
+    "svg": "formula_12_F11.svg",
+    "png": "formula_12_F11.png"
+  },
+  {
+    "index": 13,
+    "id": "F12",
+    "name": "IPLV综合部分负荷值",
+    "tex": "\\text{IPLV} = 0.01A + 0.42B + 0.45C + 0.12D",
+    "svg": "formula_13_F12.svg",
+    "png": "formula_13_F12.png"
+  },
+  {
+    "index": 14,
+    "id": "F13",
+    "name": "主效应均值",
+    "tex": "\\bar{y}_{j,i} = \\frac{1}{n_j} \\sum_{k: x_{j,k}=i} y_k",
+    "svg": "formula_14_F13.svg",
+    "png": "formula_14_F13.png"
+  },
+  {
+    "index": 15,
+    "id": "F14",
+    "name": "方差分析ANOVA",
+    "tex": "SS_j = \\sum_{i=1}^{q} n_j (\\bar{y}_{j,i} - \\bar{y})^2",
+    "svg": "formula_15_F14.svg",
+    "png": "formula_15_F14.png"
+  }
+]
