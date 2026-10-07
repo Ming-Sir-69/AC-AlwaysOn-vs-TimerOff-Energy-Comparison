@@ -1,34 +1,53 @@
-# 空调常开还是定时关更省电？
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="readme-assets/header-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="readme-assets/header-light.svg">
+  <img alt="空调常开还是定时关？ · ✦ EricMingle69" src="readme-assets/header-light.svg" width="100%">
+</picture>
 
-基于田口方法的空调能耗优化研究 —— 牛顿冷却定律 + 正交实验 + Python仿真。
+<p align="center">
+  <a href="README.md">简体中文</a> · <a href="README.en.md">English</a> · <a href="PERSONAL-NOTICE.md">✦ EricMingle69</a>
+</p>
 
-![封面](作品封面图.png)
+# 空调常开还是定时关？
 
-## 作品渲染
+比较“持续恒温”与“外出关机、返回重启”的能耗研究。
+项目将牛顿冷却模型、田口正交实验与 ANOVA 分析连接到图表和报告。
 
-| 交互式仪表盘 | 综合加权影响力分析 | 双方案能耗对比 |
-|:---:|:---:|:---:|
-| ![01](作品渲染图/01_交互式仪表盘.P.A.png) | ![02](作品渲染图/02_综合加权影响力分析.P.A.png) | ![03](作品渲染图/03_双方案能耗对比.P.A.png) |
+## 先看结果，再读假设
 
-| 收敛过程与临界点 | 三维曲面与临界热力图 |
-|:---:|:---:|
-| ![04](作品渲染图/04_收敛过程与临界点.P.A.png) | ![05](作品渲染图/05_三维曲面与临界热力图.P.A.png) |
+| 目的 | 入口 |
+| --- | --- |
+| 理解数学模型和引用 | [公式与来源索引](docs/07_公式汇总与来源索引.md) |
+| 了解开发与复现流程 | [README_DEV.md](README_DEV.md) |
+| 查看交互图表 | [能耗对比仪表盘](interactive/能耗对比交互仪表盘.html) |
+| 阅读结果 | [图表](outputs/charts/) · [Excel](空调能耗仿真结果.xlsx) · [综合报告](空调能耗对比研究_综合分析报告.pptx) |
 
-## 工作流
+仪表盘是 HTML 文件，可下载到本地后用浏览器打开。
 
-1. **理论建模** — 牛顿冷却定律 + COP衰减 + 14条公式推导
-2. **田口正交实验** — L25/L50正交表 + 5因子参数空间扫描
-3. **仿真引擎** — Python热力学仿真 + 双方案能耗对比
-4. **多维可视化** — 30+张分析图表（3D曲面/热力图/敏感性分析）
-5. **综合报告** — PPT + Excel + 交互仪表盘 + 学术版
+## 在独立副本中复现
 
-## 核心结论
+准备 Python 与 pip，在仓库根目录执行：
 
-- **外出时长是唯一显著因子**（Beta=0.848，解释84.8%方差）
-- **28°C 是热惯性激活阈值** — 低于此温度建筑自身保温已足够
-- **高温长时场景(>34°C, >8h)关空调可节能 45-55%**
-- **短暂外出(<30分钟)不应关机** — 重启能耗大于维持能耗
+```sh
+cd src
+python3 -m pip install -r requirements.txt
+python3 run_simulation.py
+```
 
-## 技术栈
+入口会重新生成 CSV、图表和根目录 Excel；运行前保留需要比较的旧产出。
+Python 最低版本、系统字体及完整环境组合仍需结合开发文档核对。
 
-`Python` `NumPy` `SciPy` `Matplotlib` `Plotly` `Taguchi` `ANOVA` `田口方法`
+## 从源码继续研究
+
+[主入口](src/run_simulation.py)负责仿真流程；[配置](src/config.py)定义参数；[热模型](src/thermal_model.py)描述模型计算。
+报告中的节能结论属于特定假设和参数下的模型结果，不能直接当作任意房间或设备的实测承诺。
+
+## 使用范围
+
+解释结果时请同时给出环境、边界条件、参数与实测验证范围。
+仓库未提供覆盖原代码与研究资料的 LICENSE；引用和再分发需分别确认来源与许可。
+
+---
+
+文档维护：**✦ EricMingle69** · [Ming-Sir-69](https://github.com/Ming-Sir-69)  
+[个人标识、许可与权限说明](PERSONAL-NOTICE.md) · 明暗页眉随 GitHub 主题自动切换。
