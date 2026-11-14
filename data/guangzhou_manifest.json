@@ -1,0 +1,12 @@
+{
+  "station": "CHN_Guangdong.Guangzhou.592870_CSWD",
+  "url": "https://energyplus-weather.s3.amazonaws.com/asia_wmo_region_2/CHN/CHN_Guangdong.Guangzhou.592870_CSWD/CHN_Guangdong.Guangzhou.592870_CSWD.epw",
+  "sha256": "8aba1405cf372b1266858ed2455d3b45d43a20315f9e450e72373d5a70b4a026",
+  "latitude": 23.17,
+  "longitude": 113.33,
+  "timezone": 8.0,
+  "hours": 8760,
+  "missing_policy": "fail on invalid required fields; no fill; RH 100–110 capped at 100 for humidity conversion only, audited separately",
+  "humidity_capped_hours": 38,
+  "interval": "EPW hour 1 = 00:00–01:00, solar position at midpoint"
+}

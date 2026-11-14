@@ -1,0 +1,29 @@
+{
+  "stations": [
+    "shenzhen",
+    "guangzhou"
+  ],
+  "season_days": 184,
+  "dt_seconds": 60,
+  "min_on_seconds": [
+    180,
+    300,
+    600
+  ],
+  "min_off_seconds": [
+    120,
+    180,
+    300
+  ],
+  "building": "non-topfloor, one exterior wall, south facing",
+  "parameters": "Parameters defaults except timer values",
+  "kind": "fixed",
+  "policies": [
+    "always",
+    "cut_all",
+    "manual"
+  ],
+  "warmup_hours": 168,
+  "run_duration": "consecutive fan-running output at one-minute resolution; incomplete boundary runs omitted; forced power cuts retained",
+  "limitation": "deterministic parameter scan, not propagated MC uncertainty; performance curves remain assumptions"
+}

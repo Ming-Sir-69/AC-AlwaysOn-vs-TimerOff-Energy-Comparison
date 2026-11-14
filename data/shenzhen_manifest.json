@@ -1,0 +1,12 @@
+{
+  "station": "CHN_Guangdong.Shenzhen.594930_SWERA",
+  "url": "https://energyplus-weather.s3.amazonaws.com/asia_wmo_region_2/CHN/CHN_Guangdong.Shenzhen.594930_SWERA/CHN_Guangdong.Shenzhen.594930_SWERA.epw",
+  "sha256": "3f99b7d5f279f4dc1d050e26d6d54b23294f6c73be4089b49072bd612fb4fce6",
+  "latitude": 22.55,
+  "longitude": 114.1,
+  "timezone": 8.0,
+  "hours": 8760,
+  "missing_policy": "fail on invalid required fields; no fill; RH 100–110 capped at 100 for humidity conversion only, audited separately",
+  "humidity_capped_hours": 0,
+  "interval": "EPW hour 1 = 00:00–01:00, solar position at midpoint"
+}

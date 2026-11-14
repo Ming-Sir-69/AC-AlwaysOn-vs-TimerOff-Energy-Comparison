@@ -1,0 +1,76 @@
+{
+  "confirmed": {
+    "people": 4,
+    "all_electrical_devices_cut_with_room_power": true,
+    "ac_restarts_automatically": false,
+    "furniture": {
+      "loft_beds": 2,
+      "floor_beds": 2,
+      "L_desks": 4,
+      "double_door_metal_wardrobes": 4
+    },
+    "glazed_openings": "远端墙中部阳台玻璃门及其左侧两扇磨砂窗",
+    "wall_fan": "入口端高处，有电可用、断电停转",
+    "floor": 2,
+    "corner_room": false,
+    "exterior_walls": "仅阳台门窗所在短墙；两侧长墙邻室，另一端走廊",
+    "balcony_facing": "west",
+    "orientation_evidence": [
+      "傍晚朝阳台方向有太阳直射，直到日落",
+      "室内影子随时间向入户门方向移动"
+    ]
+  },
+  "geometry_working_assumption": {
+    "width_m": 3.7,
+    "length_m": 6.0,
+    "height_m": 2.8,
+    "width_range_m": [
+      3.6,
+      4.4
+    ],
+    "length_range_m": [
+      5.8,
+      6.4
+    ],
+    "height_range_m": [
+      2.6,
+      3.2
+    ],
+    "glazed_equivalent_area_m2": 3.8,
+    "glazed_equivalent_area_range_m2": [
+      2.6,
+      5.2
+    ],
+    "upper_comparison_m": [
+      4.8,
+      6.0
+    ],
+    "tile_080_comparison_m": [
+      4.3,
+      6.0
+    ]
+  },
+  "sources_and_limits": [
+    "人数、手动开机、家具数量和设备位置来自居住者描述；尺寸未经实测。",
+    "由照片中床长约占3.3格地砖推算，地砖更可能为0.6米，把握中低；过道约三格，净宽基准3.7米。0.8米砖对应4.3米宽，口述上限4.8米宽，均作尺寸对照。",
+    "长宽范围依据家具贴墙关系及照片尺寸估计；均为假设边界，非测量误差。",
+    "门窗面积、人员返回和开机反应延迟、热物性及机组曲线仍为假设。",
+    "四套家具的全室有效热容采用0.2–1.0 MJ/K范围；未采用未经测量的精确质量。",
+    "照片仅用于几何判断，不随数据包提供。"
+  ],
+  "building_working_assumption": {
+    "total_building_floors": null,
+    "topfloor": false,
+    "non_topfloor_reason": "已知二楼，总层数未知，按非顶层处理",
+    "azimuth_degrees": 270,
+    "azimuth_range_degrees": [
+      240,
+      300
+    ],
+    "azimuth_reference": "0北、90东、180南、270西；西向为居住者确认事实，±30度为方位精度范围",
+    "east_counterfactual_range_degrees": [
+      60,
+      120
+    ]
+  }
+}

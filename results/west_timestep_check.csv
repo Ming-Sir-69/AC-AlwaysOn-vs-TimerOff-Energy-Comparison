@@ -1,0 +1,7 @@
+kind,dt_s,status,energy_kWh,energy_difference_vs_60_pct,reason
+fixed,60.0,valid,49.501920866397036,0.0,
+fixed,120.0,valid,49.50842781288137,0.013144836342604549,
+fixed,300.0,rejected_unstable,,,Explicit timestep is unstable for this thermal network; use a shorter step
+inverter,60.0,valid,45.198302059676124,0.0,
+inverter,120.0,valid,45.12903260102712,-0.15325677180869635,
+inverter,300.0,rejected_unstable,,,Explicit timestep is unstable for this thermal network; use a shorter step
