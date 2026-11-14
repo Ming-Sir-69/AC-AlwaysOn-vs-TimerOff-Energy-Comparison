@@ -1,0 +1,75 @@
+{
+  "room_dimensions_m": [
+    3.7,
+    6.2,
+    2.8
+  ],
+  "length_components_m": [
+    2.1,
+    2.0,
+    2.1
+  ],
+  "windows": [
+    {
+      "net_width": 0.495,
+      "net_height": 1.085,
+      "net_glass_area": 0.537075
+    },
+    {
+      "net_width": 0.495,
+      "net_height": 1.085,
+      "net_glass_area": 0.537075
+    }
+  ],
+  "door_upper_glass": {
+    "net_width": 0.83,
+    "net_height": 0.9975,
+    "net_glass_area": 0.827925
+  },
+  "net_glass_area_m2": 1.902075,
+  "net_glass_range_m2": [
+    1.6,
+    2.4
+  ],
+  "metal_lower_area_m2": 0.9450000000000001,
+  "frame_projected_area_m2": 0.4638375,
+  "frame_formula": "2*(0.565*1.155-0.495*1.085) + 0.945*2.1225 - 0.9*1.05 - 0.830*0.9975",
+  "wall_opaque_area_m2": 7.049087499999999,
+  "source": "scene/参数.json; geometry inferred from memory and photographs, not measured",
+  "thermal_assumptions": {
+    "u_metal_W_m2K": {
+      "baseline": 5.0,
+      "range": [
+        3.0,
+        7.0
+      ],
+      "basis": "assumed overall conductance including films; no measured door construction"
+    },
+    "metal_solar_absorptance": {
+      "baseline": 0.45,
+      "range": [
+        0.2,
+        0.7
+      ],
+      "basis": "assumed; display color does not establish broadband solar absorptance"
+    },
+    "u_frame_W_m2K": {
+      "baseline": 5.7,
+      "range": [
+        3.0,
+        7.0
+      ],
+      "basis": "assumed"
+    },
+    "frame_solar_absorptance": {
+      "baseline": 0.3,
+      "range": [
+        0.15,
+        0.65
+      ],
+      "basis": "assumed"
+    },
+    "opaque_branch": "no transmitted shortwave; steady sol-air conduction; heat storage neglected",
+    "source_method": "https://energyplus.readthedocs.io/en/stable/guides/input-output-reference/1.10-group-thermal-zone-descriptiongeometry.html"
+  }
+}

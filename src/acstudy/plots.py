@@ -15,7 +15,7 @@ NAMES={'always':'一直开','cut_all':'现行规定·手动开机','cut_workday'
 TYPES={'fixed':'定频','inverter':'变频'}
 SHORT={'always':'一直开','cut_all':'现行规定','cut_workday':'工作日断电','early60':'提前供电',
        'setback30':'无人时30度','manual':'自己开关','auto_restore':'来电自启（假设）'}
-ROOMS={'base':'22.2㎡基准','tile80':'25.8㎡·0.8米砖','upper':'28.8㎡口述上限'}
+ROOMS={'base':'22.94㎡基准','tile80':'26.66㎡·0.8米砖','upper':'29.76㎡口述上限'}
 THEMES={
  '亮':dict(bg='#F4EFE4',ink='#2E2A26',muted='#6B655C',grid='#E2DBCD',amber='#B07A00',blue='#1B74B5',gray='#8A8478',shade='#2E2A26'),
  '暗':dict(bg='#2E2A26',ink='#F1EBDF',muted='#A8A196',grid='#423D38',amber='#B88610',blue='#3A88B8',gray='#9A948A',shade='#F1EBDF')}
@@ -242,9 +242,9 @@ def daily(traces,theme,narrow,field=1,kind='fixed'):
     else:
         a=traces[('base',kind,'cut_all')];start=1000*a[int((day*24+12)*60)-1,4];end=1000*a[int((day*24+13.5)*60)-1,4]
         title=f'午休示例里，含湿量约从{start:.0f}降到{end:.0f}克/千克'
-    note='22.2㎡、四人、西向270°的炎热周示例；曲线为30分钟滑动平均，计算使用一分钟数据。灰带为断电，图不代表所有情景峰值。'
-    if field==5:note='22.2㎡·西向270°示例；曲线为30分钟滑动平均。降温后RH读数上升，不等于空气里水变多；含湿量另见附图。'
-    if narrow:note=('22.2㎡·西向270°·30分钟滑动平均。降温后RH上升不等于水变多。' if field==5 else '22.2㎡·西向270°；灰带表示断电。\n曲线为30分钟滑动平均，并非情景峰值。')
+    note='22.94㎡、四人、西向270°的炎热周示例；曲线为30分钟滑动平均，计算使用一分钟数据。灰带为断电，图不代表所有情景峰值。'
+    if field==5:note='22.94㎡·西向270°示例；曲线为30分钟滑动平均。降温后RH读数上升，不等于空气里水变多；含湿量另见附图。'
+    if narrow:note=('22.94㎡·西向270°·30分钟滑动平均。降温后RH上升不等于水变多。' if field==5 else '22.94㎡·西向270°；灰带表示断电。\n曲线为30分钟滑动平均，并非情景峰值。')
     card=Card(title,theme,narrow,'02 / 一天的室温' if field==1 else '03 / 一天的湿度' if field==5 else '附02 / 空气中的水蒸气',note,kind)
     selected=['always','cut_all','manual'] if not narrow else ['cut_all','manual']
     all_values=[]
@@ -282,7 +282,7 @@ def daily(traces,theme,narrow,field=1,kind='fixed'):
                 temp=raw[int((d*24+18.)*60)-1,1]
                 if not narrow:
                     sx,sy=aggregate(raw,d,field)
-                    for at,text,tx,ty in [(13.5,f'午休开机，实际降约{drop:.1f}度',.8,yl[1]-.20*(yl[1]-yl[0])),(18.,f'18:00到家，实际约{temp:.0f}度',.8,yl[1]-.39*(yl[1]-yl[0]))]:
+                    for at,text,tx,ty in [(13.5,f'午休开机，实际降约{drop:.1f}度',10.4,yl[1]-.33*(yl[1]-yl[0])),(18.,f'18:00到家，实际约{temp:.0f}度',18.3,yl[1]-.12*(yl[1]-yl[0]))]:
                         ax.annotate(text,xy=(at,float(np.interp(at,sx,sy))),xytext=(tx,ty),
                             fontproperties=card.prop(22),color=card.t['ink'],
                             bbox=dict(facecolor=card.t['bg'],edgecolor='none',pad=2,alpha=.92),
@@ -352,8 +352,8 @@ def sensitivity(sobol,theme,narrow):
     s=sobol[(sobol.kind=='fixed')&(sobol.output=='saving_kWh')].nlargest(5 if narrow else 8,'ST').sort_values('ST',ascending=False)
     top=s.iloc[0]
     title=f'西向房间的炎热周里，{top.label}最影响节电'
-    note='定频，深圳炎热周，非顶层、单面外墙、西向±30°。22个未定输入；细线为重采样95%区间。含交互，不是整季排名。'
-    if narrow:note='非顶层·西向±30°·炎热周·22个输入。\n细线：重采样95%区间，非整季排名。'
+    note='定频，深圳炎热周，非顶层、单面外墙、西向±30°。26个未定输入；细线为重采样95%区间。含交互，不是整季排名。'
+    if narrow:note='非顶层·西向±30°·炎热周·26个输入。\n细线：重采样95%区间，非整季排名。'
     card=Card(title,theme,narrow,'06 / 哪些条件更重要',note)
     ax=card.ax([.30 if narrow else .23,.27,.41 if narrow else .49,.46],grid=False)
     ax.set_ylim(len(s)-.5,-.5);ax.set_xlim(0,max(s.ST_high)*1.05);ax.set_yticks([]);ax.xaxis.set_major_locator(ticker.MaxNLocator(3 if narrow else 4));ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda v,p:f'{v:.2f}'))
@@ -369,14 +369,14 @@ def sensitivity(sobol,theme,narrow):
 
 
 def rooms(mc,theme,narrow):
-    title='房间约22–29平方米，自己开关都比强制断电多用电'
+    title='房间约23–30平方米，自己开关都比强制断电多用电'
     note='定频，非顶层、单面外墙、西向±30°，四人同机组。点和细线为自己开关相对现行规定多用电量的中位数与5–95%情景范围，非置信区间。'
     if narrow:note='非顶层·西向±30°·四人·同机组。点与细线为配对差值的中位数及5–95%情景范围，不是置信区间。'
     card=Card(title,theme,narrow,'07 / 尺寸对照',note)
     rows=[]
     for room,label in ROOMS.items():
         sub=mc[mc.room==room];values=paired(sub,'fixed','manual','energy_kWh')
-        rows.append(('manual',({'base':'22㎡基准','tile80':'26㎡对照','upper':'29㎡上限'}[room] if narrow else label.replace('·0.8米砖','').replace('口述上限','上限')),values,None))
+        rows.append(('manual',({'base':'23㎡基准','tile80':'27㎡对照','upper':'30㎡上限'}[room] if narrow else label.replace('·0.8米砖','').replace('口述上限','上限')),values,None))
     dots_card(card,rows,'自己开关比现行规定多用 / 度')
     return card
 

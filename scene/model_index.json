@@ -1,0 +1,184 @@
+{
+  "parameter_hash": "556df452f31a15009b80b2712d27e94b1c34b7f0616fb3eae5b84f4aef00f6ba",
+  "assets": {
+    "CeilingFan": {
+      "title": "吸顶摇头风扇 · 无字圆标",
+      "nominal": {
+        "width": 0.43,
+        "depth": 0.43,
+        "height": 0.435
+      }
+    },
+    "DeskCab_L": {
+      "title": "桌柜组 · 左手",
+      "nominal": {
+        "width": 2.1,
+        "depth": 0.95,
+        "height": 1.9,
+        "hand": "left"
+      }
+    },
+    "DeskCab_R": {
+      "title": "桌柜组 · 右手",
+      "nominal": {
+        "width": 2.1,
+        "depth": 0.95,
+        "height": 1.9,
+        "hand": "right"
+      }
+    },
+    "LowBed": {
+      "title": "落地单人床",
+      "nominal": {
+        "width": 2.0,
+        "depth": 0.95,
+        "height": 0.81,
+        "bed_depth": 0.95,
+        "deck": 0.45,
+        "variant": null
+      }
+    },
+    "Loft_L": {
+      "title": "高架床·左墙版",
+      "nominal": {
+        "width": 2.1,
+        "depth": 1.35,
+        "height": 2.467,
+        "bed_depth": 0.95,
+        "deck": 2.04,
+        "variant": "left"
+      }
+    },
+    "Loft_R": {
+      "title": "高架床·右墙版",
+      "nominal": {
+        "width": 2.1,
+        "depth": 1.35,
+        "height": 2.467,
+        "bed_depth": 0.95,
+        "deck": 2.04,
+        "variant": "right"
+      }
+    },
+    "RoomShell": {
+      "title": "房间壳体与固定设施",
+      "nominal": {
+        "width": 3.7,
+        "depth": 6.2,
+        "height": 2.8
+      }
+    }
+  },
+  "instances": [
+    {
+      "id": "Room",
+      "asset": "RoomShell",
+      "side": "shell",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "angle": 0
+    },
+    {
+      "id": "G1",
+      "asset": "DeskCab_R",
+      "side": "left",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "angle": 90
+    },
+    {
+      "id": "B1",
+      "asset": "Loft_L",
+      "side": "left",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "angle": 90
+    },
+    {
+      "id": "B2",
+      "asset": "LowBed",
+      "side": "left",
+      "origin": [
+        0,
+        2.1,
+        0
+      ],
+      "angle": 90
+    },
+    {
+      "id": "G2",
+      "asset": "DeskCab_L",
+      "side": "left",
+      "origin": [
+        0,
+        4.1,
+        0
+      ],
+      "angle": 90
+    },
+    {
+      "id": "G3",
+      "asset": "DeskCab_L",
+      "side": "right",
+      "origin": [
+        3.7,
+        2.1,
+        0
+      ],
+      "angle": -90
+    },
+    {
+      "id": "B3",
+      "asset": "LowBed",
+      "side": "right",
+      "origin": [
+        3.7,
+        4.1,
+        0
+      ],
+      "angle": -90
+    },
+    {
+      "id": "G4",
+      "asset": "DeskCab_R",
+      "side": "right",
+      "origin": [
+        3.7,
+        6.2,
+        0
+      ],
+      "angle": -90
+    },
+    {
+      "id": "B4",
+      "asset": "Loft_R",
+      "side": "right",
+      "origin": [
+        3.7,
+        6.2,
+        0
+      ],
+      "angle": -90
+    }
+  ],
+  "clear_aisle": 1.8000000000000003,
+  "tile_columns_in_aisle": 3.0000000000000004,
+  "tile_rows": 10.333333333333334,
+  "assumptions": [
+    "房间净尺寸3.70×6.20×2.80米，依据记忆与照片推算，非现场测量。",
+    "房长由两端各2.10米桌柜与高架床单元，加中段2.00米落地床推算。",
+    "两张高架床、两张落地床、四张L形桌及四只双门柜；构件厚度与细部尺寸为视觉近似。",
+    "阳台门上半为磨砂玻璃、下半为金属板；门窗净玻璃合计1.902075平方米。",
+    "两台吸顶网罩风扇仅用于静态摆姿；座体和摇头机构为近似，非可制造结构或运动校核。",
+    "开门方向、遮挡切换与灯光为显示设置；渲染不用于照度、气流或热计算。"
+  ]
+}

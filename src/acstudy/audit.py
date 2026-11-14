@@ -20,7 +20,8 @@ def reconstruct_budgets(weather,p,a,initial,dt=60.):
     solar=p.window_area*p.shgc*w[:,5]
     people=p.people*p.person_sensible*a[:,14]
     equipment=(p.background+p.equipment*a[:,14])*a[:,13]
-    ext_heat=(p.u_window*p.window_area*(outdoor-old[:,0])
+    opaque=p.u_metal*p.metal_area*(outdoor-old[:,0]+p.metal_absorptance*w[:,5]/p.h_out)+p.u_frame*p.frame_area*(outdoor-old[:,0]+p.frame_absorptance*w[:,5]/p.h_out)
+    ext_heat=(p.u_window*p.window_area*(outdoor-old[:,0])+opaque
               +mdot*p.cp_air*(outdoor-old[:,0])+ext*(solair-old[:,2])
               +solar+people+equipment-a[:,8]+p.latent_heat*(a[:,12]-a[:,18]))
     stored=(ca*(a[-1,1]-initial[0])+p.mass_capacity*(a[-1,2]-initial[1])

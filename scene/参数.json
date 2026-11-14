@@ -1,0 +1,272 @@
+{
+  "room": {
+    "width": 3.7,
+    "length": 6.2,
+    "height": 2.8,
+    "wall": 0.12,
+    "floor": 0.08,
+    "tile": 0.6,
+    "tile_thickness": 0.008,
+    "grout": 0.003,
+    "tile_x_phase": 0.35,
+    "skirt_height": 1.0,
+    "skirting_height": 0.08,
+    "skirting_thickness": 0.012
+  },
+  "desk": {
+    "width": 1.1,
+    "wall_depth": 0.5,
+    "total_depth": 0.95,
+    "wing_width": 0.36,
+    "inner_radius": 0.25,
+    "worktop_height": 0.75,
+    "worktop_thickness": 0.025,
+    "board": 0.018,
+    "hutch_depth": 0.3,
+    "fan_shelf_radius": 0.24,
+    "fan_shelf_back_offset": 0.08,
+    "fan_shelf_height": 1.05,
+    "storage_front_inset": 0.012,
+    "storage_plinth": 0.04,
+    "storage_shelves": 2,
+    "slider_panel_thickness": 0.006,
+    "slider_overlap": 0.035,
+    "slider_track": 0.009,
+    "slider_open_fraction": 0.0,
+    "slider_pull_width": 0.006,
+    "slider_pull_length": 0.06,
+    "upper_compartment_height": 0.3699999999999999
+  },
+  "wardrobe": {
+    "width": 1.0,
+    "depth": 0.5,
+    "height": 1.9,
+    "sheet": 0.012,
+    "plinth": 0.08,
+    "door_gap": 0.008,
+    "handle_width": 0.03,
+    "handle_height": 0.1,
+    "handle_offset": 0.06,
+    "handle_center_height": 0.95,
+    "tag_width": 0.035,
+    "tag_height": 0.04,
+    "tag_height_z": 1.5,
+    "shelves": 2,
+    "frame_top": 0.05,
+    "frame_side": 0.03,
+    "door_recess": 0.015,
+    "vent_radius": 0.0035,
+    "vent_spacing": 0.012,
+    "vent_rows": 4,
+    "vent_columns": 5
+  },
+  "bed": {
+    "length": 2.0,
+    "frame_depth": 0.95,
+    "mattress_width": 0.9,
+    "mattress_end_inset": 0.03,
+    "mattress_thickness": 0.08,
+    "deck_thickness": 0.025,
+    "low_deck_height": 0.45,
+    "post": 0.032,
+    "post_inset": 0.045,
+    "head_height_above_deck": 0.36,
+    "head_plate_height": 0.23,
+    "head_plate_thickness": 0.008,
+    "head_hole_radius": 0.008,
+    "head_holes_across": 12,
+    "head_holes_rows": 3,
+    "foot_height_above_deck": 0.06
+  },
+  "loft": {
+    "deck_height": 2.04,
+    "guard_height": 0.34,
+    "guard_lower": 0.13,
+    "guard_tube": 0.025,
+    "gap_width": 0.44,
+    "ladder_width": 0.34,
+    "ladder_rail_diameter": 0.028,
+    "ladder_outset": 0.4,
+    "ladder_steps": 6,
+    "tread_depth": 0.1,
+    "tread_thickness": 0.02,
+    "foot_height": 0.025,
+    "handle_radius": 0.065,
+    "handle_height_above_deck": 0.28,
+    "left_ladder_center": 1.72,
+    "right_ladder_center": 0.28,
+    "hook_inset": 0.1,
+    "length": 2.1,
+    "end_post": 0.045,
+    "end_height": 0.4,
+    "end_arch": 0.015,
+    "non_ladder_gap": 0.55,
+    "guard_top": 0.34,
+    "guard_post_diameter": 0.032,
+    "guard_bow": 0.025,
+    "hook_radius": 0.045,
+    "symmetric_end_gap": 0.4590000000000001
+  },
+  "openings": {
+    "entry_width": 0.9,
+    "entry_height": 2.1,
+    "entry_angle_deg": 0,
+    "balcony_width": 0.9,
+    "balcony_height": 2.1,
+    "balcony_angle_deg": 0,
+    "door_thickness": 0.035,
+    "door_frame": 0.045,
+    "door_glass_kick": 0.32,
+    "window_width": 0.53,
+    "window_height": 1.12,
+    "window_sill": 1.03,
+    "window_start_x": 0.2,
+    "window_gap": 0.055,
+    "window_frame": 0.035,
+    "glass": 0.008,
+    "leaf_frame": 0.035,
+    "handle_height": 1.0,
+    "handle_offset": 0.12,
+    "handle_length": 0.1,
+    "handle_radius": 0.007,
+    "handle_projection": 0.035,
+    "handle_plate_width": 0.03,
+    "handle_plate_height": 0.08,
+    "handle_plate_thickness": 0.006,
+    "balcony_split_fraction": 0.5,
+    "balcony_crossbar": 0.035
+  },
+  "ac": {
+    "width": 0.82,
+    "depth": 0.2,
+    "height": 0.28,
+    "center_x": 0.62,
+    "center_z": 2.48,
+    "outlet_height": 0.035,
+    "width_extra": 0.035,
+    "right_frame_clearance": 0.025
+  },
+  "lights": {
+    "length": 1.05,
+    "width": 0.08,
+    "height": 0.035,
+    "y_centers": [
+      1.5,
+      4.5
+    ],
+    "ceiling_gap": 0.02
+  },
+  "fan": {
+    "diameter": 0.43,
+    "overall_height": 0.435,
+    "head_center_height": 0.205,
+    "front_dome": 0.06,
+    "back_dome": 0.055,
+    "spokes": 96,
+    "wire_radius": 0.00065,
+    "rim_radius": 0.003,
+    "card_pitch_deg": 35,
+    "poses": [
+      {
+        "y": 0.75,
+        "yaw_deg": 35,
+        "pitch_deg": 32
+      },
+      {
+        "y": 3.0,
+        "yaw_deg": -65,
+        "pitch_deg": 42
+      }
+    ]
+  },
+  "pier": {
+    "center_x": 2.48,
+    "width": 0.16,
+    "depth": 0.07
+  },
+  "conduit": {
+    "radius": 0.009,
+    "paths": [
+      {
+        "wall": "near",
+        "points": [
+          [
+            0.03,
+            0.012,
+            2.56
+          ],
+          [
+            3.67,
+            0.012,
+            2.56
+          ]
+        ]
+      },
+      {
+        "wall": "east",
+        "points": [
+          [
+            3.688,
+            0.02,
+            2.56
+          ],
+          [
+            3.688,
+            5.98,
+            2.56
+          ]
+        ]
+      },
+      {
+        "wall": "east",
+        "points": [
+          [
+            3.688,
+            0.38,
+            2.56
+          ],
+          [
+            3.688,
+            0.38,
+            2.12
+          ]
+        ]
+      }
+    ]
+  },
+  "render": {
+    "card_samples": 12,
+    "ortho_samples": 24,
+    "preview_samples": 16,
+    "final_samples": 96,
+    "final_width": 2400,
+    "preview_width": 1200,
+    "adaptive_threshold": 0.045,
+    "bevel": 0.004
+  },
+  "palette": {
+    "wall": "#E9E3D7",
+    "skirt": "#ADB4B2",
+    "damp": "#7E8984",
+    "tile": "#A7A6A1",
+    "grout": "#747571",
+    "ivory": "#D7D5C8",
+    "blue": "#469AC6",
+    "orange": "#BC7B3A",
+    "steel": "#C4C8BE",
+    "fabric": "#87949E",
+    "fabric_line": "#BDC3C8",
+    "wood_light": "#D3AD76",
+    "wood_dark": "#9C713E",
+    "skirting": "#4D5350",
+    "balcony_titanium": "#B7AEA0"
+  },
+  "assumptions": [
+    "房间净尺寸3.70×6.20×2.80米，依据记忆与照片推算，非现场测量。",
+    "房长由两端各2.10米桌柜与高架床单元，加中段2.00米落地床推算。",
+    "两张高架床、两张落地床、四张L形桌及四只双门柜；构件厚度与细部尺寸为视觉近似。",
+    "阳台门上半为磨砂玻璃、下半为金属板；门窗净玻璃合计1.902075平方米。",
+    "两台吸顶网罩风扇仅用于静态摆姿；座体和摇头机构为近似，非可制造结构或运动校核。",
+    "开门方向、遮挡切换与灯光为显示设置；渲染不用于照度、气流或热计算。"
+  ]
+}

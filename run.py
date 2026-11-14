@@ -40,16 +40,16 @@ def parameter_register():
     known={
       'people':('固定4','居住者确认四人间、实际4人；4–8人仅作附加人数扫描'),
       'width':('3.6–4.4','照片尺寸估计：床长约占3.3格，地砖更可能0.6m（中低把握）；过道三块砖，工作值3.7m'),
-      'length':('5.8–6.4','家具贴墙关系与照片尺寸估计；基准6.0m'),
+      'length':('6.0–6.4','家具贴墙关系与照片尺寸估计；基准6.2m'),
       'height':('2.6–3.2','假设；基准2.8m'),
-      'window_area':('2.6–5.2','假设：阳台玻璃门及左侧两扇玻璃窗合计等效面积；基准3.8m²，不是实测'),
+      'window_area':('1.6–2.4','假设：阳台玻璃门及左侧两扇玻璃窗合计等效面积；净玻璃1.902075m²，金属板与框另算，不是实测'),
       'furniture_capacity':('200000–1000000','假设：两高架床、两落地床、四张L桌与四只铁柜的全室有效热容；材料质量未测，未采用未经测量的精确数值'),
       'building_capacity':('1000000–6000000','假设：19.2m²下内墙地顶有效蓄热；与家具分开'),
       'mass_capacity':('建筑有效热容*面积/19.2+四套家具热容','派生假设，家具不再乘四，不随地面积重复放大'),
-      'wall_area':('width*height-window_area；转角另加length*height','派生：一面窗端外墙与转角情景择一，未把四面墙全算外墙'),
+      'wall_area':('width*height-window_area-metal_area-frame_area；转角另加length*height','派生：一面窗端外墙与转角情景择一，未把四面墙全算外墙'),
       'wall_capacity':('2e6*(wall_area+roof_area)/30','假设有效厚度；材料量级来自已存档EnergyPlus示例混凝土密度2242.585、比热836.8'),
       'roof_area':('0或实际地面积','非顶层/顶层替代情景；与地面积绑定，不独立抽样面积'),
-      'area':('20.88–28.16；基准22.2，0.8m砖对照25.8，口述上限28.8','净宽乘净长，均非实测；对照长6m，宽分别4.3/4.8m'),
+      'area':('21.60–28.16；基准22.94，0.8m砖对照26.66，口述上限29.76','净宽乘净长，均非实测；对照长6m，宽分别4.3/4.8m'),
       'corner':('0或1','假设：单面窗端外墙/转角两面外墙，各半情景不是现实概率'),
       'topfloor':('0或1','假设：非顶层/顶层，各半情景不是现实概率'),
       'absorptance':('0.4–0.8','EnergyPlus示例混凝土太阳吸收率0.65，实际表面待核'),
@@ -105,7 +105,7 @@ def verification(frames,metas,week):
                                energy_difference_vs_60_pct=100*(m['energy_kWh']/ref['energy_kWh']-1)))
     pd.DataFrame(records).to_csv(ROOT/'results/timestep_check.csv',index=False)
     from scipy.linalg import expm
-    passive=replace(Parameters(),capacity=0,people=0,equipment=0,background=0,ach=0,shgc=0,absorptance=0)
+    passive=replace(Parameters(),capacity=0,people=0,equipment=0,background=0,ach=0,shgc=0,absorptance=0,metal_area=0,frame_area=0)
     weather=np.tile([32.,.009,101325.,0.,0.,0.],(24,1))
     pp=replace(passive,wall_area=0,g_mass=0)
     a=simulate(weather,pp,dt=60,warmup_hours=0,initial=[26,26,26,.009])

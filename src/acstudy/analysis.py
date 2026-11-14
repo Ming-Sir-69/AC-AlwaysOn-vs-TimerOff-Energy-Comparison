@@ -13,14 +13,16 @@ BOUNDS = {
     'capacity':(2600.,5000.),'weather_delta':(-1.,2.),'lunch_fraction':(0.,1.),
     'coil_temperature':(8.,15.),'airflow':(.13,.30),'startup_seconds':(15.,90.),
     'setpoint':(25.,28.),'topfloor':(0.,1.),'corner':(0.,1.),'shgc':(.35,.8),
-    'width':(3.6,4.4),'length':(5.8,6.4),'height':(2.6,3.2),'window_area':(2.6,5.2),
+    'width':(3.6,4.4),'length':(6.0,6.4),'height':(2.6,3.2),'window_area':(1.6,2.4),
     'evening_return_minutes':(0.,60.),'lunch_arrival_minutes':(0.,15.),
-    'manual_delay_minutes':(0.,5.),'g_mass':(200.,800.)}
+    'manual_delay_minutes':(0.,5.),'g_mass':(200.,800.),
+    'u_metal':(3.,7.),'metal_absorptance':(.20,.70),
+    'u_frame':(3.,7.),'frame_absorptance':(.15,.65)}
 LABELS = ['墙体传热','换气','建筑内蓄热','四套家具蓄热','朝向','额定能效',
           '制冷能力','室外温度','午休返回概率','盘管温度','盘管风量','启动爬升',
           '设定温度','顶层情景','转角情景','玻璃太阳得热','净宽','净长','净高',
-          '玻璃门窗面积','下班返回延迟','午休返回延迟','手动开机反应','室内热耦合']
-ROOM_AREAS={'base':22.2,'tile80':25.8,'upper':28.8}
+          '玻璃门窗面积','下班返回延迟','午休返回延迟','手动开机反应','室内热耦合','金属门传热','金属门太阳吸收','门窗框传热','门窗框太阳吸收']
+ROOM_AREAS={'base':22.94,'tile80':26.66,'upper':29.76}
 
 
 def sobol_indices(a,b,c):
@@ -30,10 +32,17 @@ def sobol_indices(a,b,c):
     return s,st
 
 
+def scenario_units(n):
+    # Keep the original 24 unresolved-input draws paired across geometry changes.
+    original=np.random.default_rng(SEED).random((n,24))
+    extra=np.random.default_rng(SEED+2).random((n,len(BOUNDS)-24))
+    return np.column_stack([original,extra])
+
+
 def parameters_from_unit(row,room='base'):
     d={key:lo+(hi-lo)*float(x) for x,(key,(lo,hi)) in zip(row,BOUNDS.items())}
-    if room=='upper':d.update(width=4.8,length=6.)
-    elif room=='tile80':d.update(width=4.3,length=6.)
+    if room=='upper':d.update(width=4.8,length=6.2)
+    elif room=='tile80':d.update(width=4.3,length=6.2)
     d['corner']=float(d['corner']>=.5)
     d['topfloor']=float(d['topfloor']>=.5)
     return room_parameters(**d)
@@ -116,7 +125,7 @@ def metrics(a,p,dt=60.,recovery_data=None):
 
 def monte_carlo(frames,metas,n=128,progress=print):
     rng=np.random.default_rng(SEED)
-    unit=rng.random((n,len(BOUNDS)))
+    unit=scenario_units(n)
     rows=[]
     for k,u in enumerate(unit):
         station='shenzhen' if k%2==0 else 'guangzhou'

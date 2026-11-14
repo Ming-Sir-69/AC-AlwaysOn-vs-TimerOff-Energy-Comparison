@@ -6,7 +6,7 @@
   "hot_week_doy_end": 191,
   "dt_seconds": 60,
   "season_days": 184,
-  "n_parameters": 22,
+  "n_parameters": 26,
   "reused_rows": 0,
   "weather": {
     "shenzhen": {
@@ -35,16 +35,16 @@
     }
   },
   "baseline": {
-    "area": 22.2,
+    "area": 22.94,
     "height": 2.8,
-    "wall_area": 6.56,
+    "wall_area": 7.049087499999999,
     "roof_area": 0.0,
-    "window_area": 3.8,
+    "window_area": 1.902075,
     "u_wall": 2.0,
     "u_window": 5.7,
-    "mass_capacity": 3390625.0,
-    "wall_capacity": 437333.3333333333,
-    "g_mass": 578.125,
+    "mass_capacity": 3486979.166666667,
+    "wall_capacity": 469939.1666666666,
+    "g_mass": 597.3958333333334,
     "ach": 0.6,
     "shgc": 0.65,
     "absorptance": 0.65,
@@ -86,20 +86,26 @@
     "airflow": 0.18,
     "bypass_factor": 0.15,
     "corner": 0.0,
-    "width": 3.6999999999999997,
-    "length": 6.0,
+    "width": 3.7,
+    "length": 6.2,
     "evening_return_minutes": 30.0,
     "lunch_arrival_minutes": 5.0,
     "manual_delay_minutes": 1.0,
     "furniture_capacity": 500000.0,
     "building_capacity": 2500000.0,
-    "topfloor": 0.0
+    "topfloor": 0.0,
+    "metal_area": 0.945,
+    "frame_area": 0.4638375,
+    "u_metal": 5.0,
+    "metal_absorptance": 0.45,
+    "u_frame": 5.7,
+    "frame_absorptance": 0.3
   },
   "fingerprints": {
-    "src/acstudy/model.py": "f59b828bd75cef1fe886b234bbb610ae122e670594f2090e1964853a6046dabe",
-    "src/acstudy/weather.py": "4f1cd5bd1dd9e2b7dc45c7361f72626cdfc49c4888fdde787887978d1d7fcd5c",
-    "src/acstudy/analysis.py": "074327f44ecedfb6eff2649a22c60e97a5b64b77154629d11878c0b2e9582518",
-    "src/acstudy/confirmed.py": "7dcbea45bd70f2cfed5dc6a2717d11b026360e303c13a9b8cce0fb3e18b7b89b",
+    "src/acstudy/model.py": "2aa96ddcc999cedae7c5cfa3e08bb5b4b2081a3dda91fe633cb01e40d6352e4c",
+    "src/acstudy/weather.py": "194ef35a59c9891ced7be2f3231e719b6164b68fafe193817b96cdab355d86f4",
+    "src/acstudy/analysis.py": "ef5f882602a6cab8a0082f0effd8f918e6810db535451e59a622af0e8a28fed1",
+    "src/acstudy/confirmed.py": "9beee7b26b8187765ec6bdd302fcb89faeefb6a0105fa599a9509fe3ea493089",
     "data/CHN_Guangdong.Shenzhen.594930_SWERA.epw": "3f99b7d5f279f4dc1d050e26d6d54b23294f6c73be4089b49072bd612fb4fce6",
     "data/CHN_Guangdong.Guangzhou.592870_CSWD.epw": "8aba1405cf372b1266858ed2455d3b45d43a20315f9e450e72373d5a70b4a026"
   },
@@ -123,6 +129,18 @@
       60.0,
       120.0
     ]
+  },
+  "geometry": {
+    "width": 3.7,
+    "length": 6.2,
+    "height": 2.8,
+    "glass_area": 1.902075,
+    "glass_range": [
+      1.6,
+      2.4
+    ],
+    "metal_area": 0.945,
+    "frame_area": 0.4638375
   },
   "west_bounds": {
     "u_wall": [
@@ -186,7 +204,7 @@
       4.4
     ],
     "length": [
-      5.8,
+      6.0,
       6.4
     ],
     "height": [
@@ -194,8 +212,8 @@
       3.2
     ],
     "window_area": [
-      2.6,
-      5.2
+      1.6,
+      2.4
     ],
     "evening_return_minutes": [
       0.0,
@@ -212,11 +230,31 @@
     "g_mass": [
       200.0,
       800.0
+    ],
+    "u_metal": [
+      3.0,
+      7.0
+    ],
+    "metal_absorptance": [
+      0.2,
+      0.7
+    ],
+    "u_frame": [
+      3.0,
+      7.0
+    ],
+    "frame_absorptance": [
+      0.15,
+      0.65
     ]
   },
   "control_policies": [
     "always",
     "cut_all",
     "manual"
-  ]
+  ],
+  "geometry_source_sha256": {
+    "scene/参数.json": "556df452f31a15009b80b2712d27e94b1c34b7f0616fb3eae5b84f4aef00f6ba",
+    "data/openings_geometry.json": "533dd2d1da17046ecc45c6b3a4ed52021218286ad53f7f165ccfb6201f2a3ef7"
+  }
 }

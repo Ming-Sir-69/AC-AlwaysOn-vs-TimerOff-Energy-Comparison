@@ -9,16 +9,16 @@ LUNCH_CALENDAR = np.random.default_rng(20261113).random(366)
 
 @dataclass(frozen=True)
 class Parameters:
-    area: float = 22.2
+    area: float = 3.7*6.2
     height: float = 2.8
-    wall_area: float = 6.56
+    wall_area: float = 3.7*2.8-1.902075-.945-.4638375
     roof_area: float = 0.
-    window_area: float = 3.8
+    window_area: float = 1.902075
     u_wall: float = 2.
     u_window: float = 5.7
-    mass_capacity: float = 3390625.
-    wall_capacity: float = 437333.3333333333
-    g_mass: float = 578.125
+    mass_capacity: float = 2500000.*(3.7*6.2)/19.2+500000.
+    wall_capacity: float = 2.e6*(3.7*2.8-1.902075-.945-.4638375)/30.
+    g_mass: float = 500.*(3.7*6.2)/19.2
     ach: float = .6
     shgc: float = .65
     absorptance: float = .65
@@ -64,7 +64,7 @@ class Parameters:
 
     corner: float = 0.
     width: float = 3.7
-    length: float = 6.
+    length: float = 6.2
     evening_return_minutes: float = 30.
     lunch_arrival_minutes: float = 5.
     manual_delay_minutes: float = 1.
@@ -72,22 +72,29 @@ class Parameters:
     building_capacity: float = 2500000.
     topfloor: float = 0.
 
+    metal_area: float = .945
+    frame_area: float = .4638375
+    u_metal: float = 5.
+    metal_absorptance: float = .45
+    u_frame: float = 5.7
+    frame_absorptance: float = .30
+
     def vector(self):
         return np.array(list(asdict(self).values()), dtype=float)
 
 
-def room_parameters(area=22.2, **overrides):
-    if abs(area-28.8)<1e-8: width,length=4.8,6.
-    elif abs(area-25.8)<1e-8: width,length=4.3,6.
+def room_parameters(area=22.94, **overrides):
+    if abs(area-29.76)<1e-8: width,length=4.8,6.2
+    elif abs(area-26.66)<1e-8: width,length=4.3,6.2
     else:
-        width=np.sqrt(area*3.7/6.)
+        width=np.sqrt(area*3.7/6.2)
         length=area/width
     values=asdict(Parameters())
     values.update(width=width,length=length)
     values.update(overrides)
     area=values['width']*values['length']
-    facade=values['width']*values['height']-values['window_area']
-    if facade<=0:raise ValueError('Glazed openings exceed the facade area')
+    facade=values['width']*values['height']-values['window_area']-values['metal_area']-values['frame_area']
+    if facade<=0:raise ValueError('Glazing, opaque door and frame exceed the facade area')
     wall=facade+(values['length']*values['height'] if values['corner']>.5 else 0.)
     roof=area if values['topfloor']>.5 else 0.
     values.update(area=area,wall_area=wall,roof_area=roof,
@@ -196,6 +203,8 @@ def simulate_core(weather, p, kind, policy, dt=60., warmup_hours=168,
     gext = 2.*ua
     gint = 2.*ua
     gw = p[6]*p[4]
+    gd=p[59]*p[61]
+    gf=p[60]*p[63]
     mdot = air_mass*p[10]/3600.
     hfg = p[40]
     for i in range(-nwarm, n):
@@ -212,11 +221,14 @@ def simulate_core(weather, p, kind, policy, dt=60., warmup_hours=168,
         # Exterior sol-air; roof and walls share one envelope node.
         solar_ext = p[12]/p[13]*(p[2]*solwall+p[3]*solroof)
         te = to + solar_ext/max(p[2]+p[3], 1.e-9)
+        # Opaque metal and frames transmit no shortwave. A steady sol-air
+        # branch handles conduction and absorbed solar without a new heat store.
+        qopaque=gd*(to-ta+p[62]*solwin/p[13])+gf*(to-ta+p[64]*solwin/p[13])
         qsolar = p[4]*p[11]*solwin
         internal = p[14]*p[15]*occupied + ((p[18]+p[17]*occupied) if allowed else 0.)
         vapor = p[14]*p[16]*occupied/hfg
         # Split shortwave equally between air and mass as an explicit assumption.
-        qa_ext = gw*(to-ta)+mdot*p[39]*(to-ta)+internal+.5*qsolar
+        qa_ext = gw*(to-ta)+qopaque+mdot*p[39]*(to-ta)+internal+.5*qsolar
         qm_ext = .5*qsolar
         qwa, qma = gint*(tw-ta), p[9]*(tm-ta)
         cap = p[19]*max(.55, 1.-p[25]*(to-35.))
@@ -357,7 +369,7 @@ def simulate(weather, parameters=Parameters(), kind='inverter', policy='always',
     ca=p.rho_air*p.area*p.height*p.cp_air
     mass_flow_cp=p.rho_air*p.area*p.height*p.ach/3600*p.cp_air
     g=2*p.u_wall*(p.wall_area+p.roof_area)
-    conductance=np.array([[p.u_window*p.window_area+mass_flow_cp+p.g_mass+g,-p.g_mass,-g],
+    conductance=np.array([[p.u_window*p.window_area+p.u_metal*p.metal_area+p.u_frame*p.frame_area+mass_flow_cp+p.g_mass+g,-p.g_mass,-g],
                           [-p.g_mass,p.g_mass,0.],[-g,0.,2*g]])
     root_capacity=np.sqrt([ca,p.mass_capacity,p.wall_capacity])
     rate=np.linalg.eigvalsh(conductance/np.outer(root_capacity,root_capacity)).max()

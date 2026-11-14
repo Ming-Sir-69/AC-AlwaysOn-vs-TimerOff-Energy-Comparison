@@ -15,8 +15,8 @@ def case_parameters(unit, case='west', room='base'):
     bearing=float(unit[list(BOUNDS).index('azimuth')])
     d.update(topfloor=float(case=='west_top'),corner=float(case=='west_corner'),
              azimuth=(60. if case=='east' else 240.)+60.*bearing)
-    if room=='tile80':d.update(width=4.3,length=6.)
-    elif room=='upper':d.update(width=4.8,length=6.)
+    if room=='tile80':d.update(width=4.3,length=6.2)
+    elif room=='upper':d.update(width=4.8,length=6.2)
     return room_parameters(**d)
 
 

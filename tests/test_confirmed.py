@@ -24,7 +24,7 @@ def test_building_controls_share_all_unresolved_inputs():
 
 def test_west_sensitivity_removes_building_switches():
     assert 'topfloor' not in WEST_BOUNDS and 'corner' not in WEST_BOUNDS
-    assert len(WEST_BOUNDS)==22
+    assert len(WEST_BOUNDS)==26
     for level,azimuth in [(0.,240.),(1.,300.)]:
         p=west_parameters(np.full(len(WEST_BOUNDS),level))
         assert p.azimuth==azimuth and p.roof_area==0 and p.corner==0

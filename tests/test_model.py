@@ -10,7 +10,7 @@ def constant(t=32.,hours=24,w=.009):
 
 def passive():
     return replace(Parameters(),capacity=0,people=0,equipment=0,background=0,
-                   ach=0,shgc=0,absorptance=0)
+                   ach=0,shgc=0,absorptance=0,metal_area=0,frame_area=0)
 
 
 def test_energy_and_moisture_conservation():

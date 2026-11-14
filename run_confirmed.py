@@ -7,7 +7,7 @@ import pandas as pd
 ROOT=Path(__file__).resolve().parent
 sys.path.insert(0,str(ROOT/'src'))
 from acstudy.model import Parameters,room_parameters,simulate,POLICIES,COLUMNS
-from acstudy.analysis import BOUNDS,SEED,ROOM_AREAS,metrics,summarize_windows,sobol_analysis
+from acstudy.analysis import BOUNDS,SEED,ROOM_AREAS,metrics,summarize_windows,sobol_analysis,scenario_units
 from acstudy.weather import load_epw,forcing_for_parameters
 from acstudy.confirmed import CASES,case_parameters,WEST_BOUNDS,WEST_LABELS,west_parameters
 
@@ -28,7 +28,7 @@ def seasons(frames,metas,n,signature):
         done=len(counts);assert set(counts.index)==set(range(done))
         rows=old.to_dict('records');print(f'Resume same-input completed samples: {done}/{n}',flush=True)
     else:stamp.write_text(json.dumps(signature,indent=2))
-    unit=np.random.default_rng(SEED).random((n,len(BOUNDS)))
+    unit=scenario_units(n)
     for k,u in enumerate(unit):
         if k<done:continue
         station='shenzhen' if k%2==0 else 'guangzhou'
@@ -94,10 +94,15 @@ def main():
     signature=input_signature(args.mc,args.sobol)
     frames={};metas={}
     for station in ['shenzhen','guangzhou']:frames[station],metas[station]=load_epw(ROOT/'data',station)
-    cfg=json.loads((ROOT/'results/config.json').read_text())
+    daily=frames['shenzhen'].groupby('doy')['T'].mean()
+    end=int(daily.rolling(7).mean().loc[159:273].idxmax())
+    cfg=dict(mc_n=args.mc,sobol_n=args.sobol,seed=SEED,hot_week_doy_start=end-6,
+             hot_week_doy_end=end,dt_seconds=60,season_days=184,weather=metas,reused_rows=0)
     cfg.update(signature,baseline=asdict(room_parameters(azimuth=270.)),n_parameters=len(WEST_BOUNDS),
         mc_trajectories=60*args.mc,west_trajectories=42*args.mc,control_trajectories=18*args.mc,
         building_facts={'floor':2,'total_floors':None,'topfloor':False,'topfloor_status':'assumed non-topfloor because total floors unknown','corner':False,'exterior_wall':'balcony facade only','azimuth_baseline':270.,'azimuth_range':[240.,300.],'azimuth_status':'west confirmed by resident: direct sunset glare and shadow motion','east_control_range':[60.,120.]},
+        geometry={'width':3.7,'length':6.2,'height':2.8,'glass_area':1.902075,'glass_range':[1.6,2.4],'metal_area':.945,'frame_area':.4638375},
+        geometry_source_sha256={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in ['scene/参数.json','data/openings_geometry.json']},
         west_bounds=WEST_BOUNDS,control_policies=['always','cut_all','manual'])
     mc=seasons(frames,metas,args.mc,signature)
     frame=frames['shenzhen'];week=frame[frame.doy.between(cfg['hot_week_doy_start'],cfg['hot_week_doy_end'])]

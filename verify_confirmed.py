@@ -34,7 +34,7 @@ def main():
  parser=argparse.ArgumentParser();parser.add_argument('--details-only',action='store_true');args=parser.parse_args()
  daily_details()
  if args.details_only:return
- f,meta=load_epw(ROOT/'data','shenzhen');cfg=json.loads((ROOT/'results/config.json').read_text())
+ f,meta=load_epw(ROOT/'data','shenzhen');cfg=json.loads((ROOT/'results/confirmed_config.json').read_text())
  week=f[f.doy.between(cfg['hot_week_doy_start'],cfg['hot_week_doy_end'])]
  p=room_parameters(azimuth=270.);w=forcing_for_parameters(week,meta,p)
  checks=[];budgets=[]

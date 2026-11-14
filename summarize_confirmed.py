@@ -8,8 +8,8 @@ def summarize():
     ROOT=Path(__file__).resolve().parent;sys.path.insert(0,str(ROOT/'src'))
     from acstudy.presentation import baseline,paired_values
     from acstudy.confirmed import CASES
-    mc=pd.read_csv(ROOT/'results/building_confirmed.csv.gz');old=pd.read_csv(ROOT/'results/monte_carlo.csv.gz')
-    west=baseline(mc);west=west[west.room=='base'];previous=baseline(old);previous=previous[previous.room=='base']
+    mc=pd.read_csv(ROOT/'results/building_confirmed.csv.gz')
+    west=baseline(mc);west=west[west.room=='base']
     rows=[]
     def add(part,label):
      for kind in ['fixed','inverter']:
@@ -26,8 +26,6 @@ def summarize():
        for suffix,val in zip(['p05','p50','p95'],np.quantile(vals,[.05,.5,.95])):row[metric+'_'+suffix]=float(val)
       rows.append(row)
     for case,label in CASES:add(mc[(mc.room=='base')&(mc.building_case==case)],case)
-    add(previous,'previous_35_broad_azimuth')
-    add(west[west['sample'].isin(previous['sample'].unique())],'west_same_previous_35')
     pd.DataFrame(rows).to_csv(ROOT/'results/confirmed_summary.csv',index=False)
     # Paired construction and azimuth controls really share the same unresolved inputs.
     westc=west[(west.kind=='fixed')&(west.policy=='cut_all')].set_index('sample').sort_index()

@@ -10,7 +10,7 @@ from acstudy.weather import load_epw,forcing_for_parameters
 
 def generate():
     frame,meta=load_epw(ROOT/'data','shenzhen')
-    cfg=json.loads((ROOT/'results/config.json').read_text())
+    cfg=json.loads((ROOT/'results/confirmed_config.json').read_text())
     week=frame[frame.doy.between(cfg['hot_week_doy_start'],cfg['hot_week_doy_end'])]
     for room,area in ROOM_AREAS.items():
         p=room_parameters(area)

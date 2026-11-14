@@ -10,7 +10,7 @@ from acstudy.analysis import ROOM_AREAS
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--only',nargs='+');p.add_argument('--report',action='store_true');args=p.parse_args()
-    protected=list((ROOT/'results').glob('*.csv'))+list((ROOT/'results').glob('*.csv.gz'))+list((ROOT/'results').glob('*.npz'))+[ROOT/'results/config.json']+list((ROOT/'data').glob('*.epw'))
+    protected=list((ROOT/'results').glob('*.csv'))+list((ROOT/'results').glob('*.csv.gz'))+list((ROOT/'results').glob('*.npz'))+[ROOT/'results/confirmed_config.json']+list((ROOT/'data').glob('*.epw'))
     fingerprints={str(x.relative_to(ROOT)):hashlib.sha256(x.read_bytes()).hexdigest() for x in protected}
     mc=pd.read_csv(ROOT/'results/building_confirmed.csv.gz');sobol=pd.read_csv(ROOT/'results/west_sobol.csv');phase=pd.read_csv(ROOT/'results/west_phase.csv')
     traces={(room,kind,policy):pd.read_csv(ROOT/f'results/west_trace_{room}_{kind}_{policy}.csv.gz').to_numpy() for room in ROOM_AREAS for kind in TYPES for policy in POLICIES}

@@ -71,7 +71,7 @@ def forcing_for_parameters(frame,meta,p):
     values=forcing(frame,meta,p.azimuth,p.ground_albedo)
     if p.corner>.5:
         side=forcing(frame,meta,(p.azimuth+90.)%360.,p.ground_albedo)
-        front=p.width*p.height-p.window_area
+        front=p.width*p.height-p.window_area-p.metal_area-p.frame_area
         side_area=p.length*p.height
         values[:,3]=(front*values[:,3]+side_area*side[:,3])/(front+side_area)
     return values
