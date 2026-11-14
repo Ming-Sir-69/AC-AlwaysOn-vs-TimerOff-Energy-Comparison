@@ -74,10 +74,10 @@ class Parameters:
 
     metal_area: float = .945
     frame_area: float = .4638375
-    u_metal: float = 5.
-    metal_absorptance: float = .45
+    u_metal: float = 5.7
+    metal_absorptance: float = .70
     u_frame: float = 5.7
-    frame_absorptance: float = .30
+    frame_absorptance: float = .48
 
     def vector(self):
         return np.array(list(asdict(self).values()), dtype=float)

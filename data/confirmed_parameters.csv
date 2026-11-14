@@ -60,7 +60,7 @@ building_capacity,2500000.0,1000000.0–6000000.0,假设：19.2m²下内墙地�
 topfloor,0.0,固定0；对照时单独改1,二楼总层数未知，按非顶层处理,False,主基准固定；单项配对建筑对照
 metal_area,0.945,固定几何面积,场景几何与明确热学假设；详见data/openings_geometry.json,False,由门窗净尺寸与框投影分区，不与玻璃或实墙重叠
 frame_area,0.4638375,固定几何面积,场景几何与明确热学假设；详见data/openings_geometry.json,False,由门窗净尺寸与框投影分区，不与玻璃或实墙重叠
-u_metal,5.0,3.0–7.0,场景几何与明确热学假设；详见data/openings_geometry.json,True,独立均匀情景输入
-metal_absorptance,0.45,0.2–0.7,场景几何与明确热学假设；详见data/openings_geometry.json,True,独立均匀情景输入
-u_frame,5.7,3.0–7.0,场景几何与明确热学假设；详见data/openings_geometry.json,True,独立均匀情景输入
-frame_absorptance,0.3,0.15–0.65,场景几何与明确热学假设；详见data/openings_geometry.json,True,独立均匀情景输入
+u_metal,5.7,3.0–7.0,深色铝合金板及混合门窗框的未测假设；量级参考与边界见data/openings_geometry.json,True,独立均匀情景输入
+metal_absorptance,0.7,0.5–0.9,深色铝合金板及混合门窗框的未测假设；量级参考与边界见data/openings_geometry.json,True,独立均匀情景输入
+u_frame,5.7,3.0–7.0,深色铝合金板及混合门窗框的未测假设；量级参考与边界见data/openings_geometry.json,True,独立均匀情景输入
+frame_absorptance,0.48,0.3–0.75,深色铝合金板及混合门窗框的未测假设；量级参考与边界见data/openings_geometry.json,True,独立均匀情景输入

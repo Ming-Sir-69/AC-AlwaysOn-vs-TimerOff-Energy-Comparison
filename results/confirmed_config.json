@@ -6,8 +6,6 @@
   "hot_week_doy_end": 191,
   "dt_seconds": 60,
   "season_days": 184,
-  "n_parameters": 26,
-  "reused_rows": 0,
   "weather": {
     "shenzhen": {
       "station": "CHN_Guangdong.Shenzhen.594930_SWERA",
@@ -33,6 +31,15 @@
       "humidity_capped_hours": 38,
       "interval": "EPW hour 1 = 00:00–01:00, solar position at midpoint"
     }
+  },
+  "reused_rows": 0,
+  "fingerprints": {
+    "src/acstudy/model.py": "ed030aad74d4b2f46f3818d3588f2ca8843114e2ecc5fafbf64c61383262004f",
+    "src/acstudy/weather.py": "194ef35a59c9891ced7be2f3231e719b6164b68fafe193817b96cdab355d86f4",
+    "src/acstudy/analysis.py": "0e0b839b9c2bd6b37d9e27eaf4f7b0775a4c1226520d6d15964363e5e6d7eae5",
+    "src/acstudy/confirmed.py": "9beee7b26b8187765ec6bdd302fcb89faeefb6a0105fa599a9509fe3ea493089",
+    "data/CHN_Guangdong.Shenzhen.594930_SWERA.epw": "3f99b7d5f279f4dc1d050e26d6d54b23294f6c73be4089b49072bd612fb4fce6",
+    "data/CHN_Guangdong.Guangzhou.592870_CSWD.epw": "8aba1405cf372b1266858ed2455d3b45d43a20315f9e450e72373d5a70b4a026"
   },
   "baseline": {
     "area": 22.94,
@@ -96,19 +103,12 @@
     "topfloor": 0.0,
     "metal_area": 0.945,
     "frame_area": 0.4638375,
-    "u_metal": 5.0,
-    "metal_absorptance": 0.45,
+    "u_metal": 5.7,
+    "metal_absorptance": 0.7,
     "u_frame": 5.7,
-    "frame_absorptance": 0.3
+    "frame_absorptance": 0.48
   },
-  "fingerprints": {
-    "src/acstudy/model.py": "2aa96ddcc999cedae7c5cfa3e08bb5b4b2081a3dda91fe633cb01e40d6352e4c",
-    "src/acstudy/weather.py": "194ef35a59c9891ced7be2f3231e719b6164b68fafe193817b96cdab355d86f4",
-    "src/acstudy/analysis.py": "ef5f882602a6cab8a0082f0effd8f918e6810db535451e59a622af0e8a28fed1",
-    "src/acstudy/confirmed.py": "9beee7b26b8187765ec6bdd302fcb89faeefb6a0105fa599a9509fe3ea493089",
-    "data/CHN_Guangdong.Shenzhen.594930_SWERA.epw": "3f99b7d5f279f4dc1d050e26d6d54b23294f6c73be4089b49072bd612fb4fce6",
-    "data/CHN_Guangdong.Guangzhou.592870_CSWD.epw": "8aba1405cf372b1266858ed2455d3b45d43a20315f9e450e72373d5a70b4a026"
-  },
+  "n_parameters": 26,
   "mc_trajectories": 7680,
   "west_trajectories": 5376,
   "control_trajectories": 2304,
@@ -141,6 +141,10 @@
     ],
     "metal_area": 0.945,
     "frame_area": 0.4638375
+  },
+  "geometry_source_sha256": {
+    "scene/参数.json": "c42a2d4b5fd0a8bab9eea0f8891ebac41bc02dbe9401d54f20353dfd466851e9",
+    "data/openings_geometry.json": "66ae6d24d90ac39d468621bc12370bb93105ff751b47bc61eace0e125a5415fc"
   },
   "west_bounds": {
     "u_wall": [
@@ -236,25 +240,21 @@
       7.0
     ],
     "metal_absorptance": [
-      0.2,
-      0.7
+      0.5,
+      0.9
     ],
     "u_frame": [
       3.0,
       7.0
     ],
     "frame_absorptance": [
-      0.15,
-      0.65
+      0.3,
+      0.75
     ]
   },
   "control_policies": [
     "always",
     "cut_all",
     "manual"
-  ],
-  "geometry_source_sha256": {
-    "scene/参数.json": "556df452f31a15009b80b2712d27e94b1c34b7f0616fb3eae5b84f4aef00f6ba",
-    "data/openings_geometry.json": "533dd2d1da17046ecc45c6b3a4ed52021218286ad53f7f165ccfb6201f2a3ef7"
-  }
+  ]
 }

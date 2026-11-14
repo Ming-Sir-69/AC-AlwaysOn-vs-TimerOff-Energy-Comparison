@@ -1,7 +1,7 @@
 kind,dt_s,status,energy_kWh,energy_difference_vs_60_pct,reason
-fixed,60.0,valid,45.383853929658954,0.0,
-fixed,120.0,valid,45.24801553614232,-0.2993099566360624,
+fixed,60.0,valid,45.9752364413279,0.0,
+fixed,120.0,valid,45.81892169347908,-0.3399977029988732,
 fixed,300.0,rejected_unstable,,,Explicit timestep is unstable for this thermal network; use a shorter step
-inverter,60.0,valid,40.69614263982461,0.0,
-inverter,120.0,valid,40.64513870696697,-0.12532866642679386,
+inverter,60.0,valid,41.326406668891316,0.0,
+inverter,120.0,valid,41.2736086919979,-0.12775845070788217,
 inverter,300.0,rejected_unstable,,,Explicit timestep is unstable for this thermal network; use a shorter step

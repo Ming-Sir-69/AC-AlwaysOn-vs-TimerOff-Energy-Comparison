@@ -134,7 +134,9 @@
     "handle_plate_height": 0.08,
     "handle_plate_thickness": 0.006,
     "balcony_split_fraction": 0.5,
-    "balcony_crossbar": 0.035
+    "balcony_crossbar": 0.035,
+    "balcony_rib_pitch": 0.018,
+    "balcony_rib_relief": 0.0015
   },
   "ac": {
     "width": 0.82,
@@ -259,13 +261,15 @@
     "wood_light": "#D3AD76",
     "wood_dark": "#9C713E",
     "skirting": "#4D5350",
-    "balcony_titanium": "#B7AEA0"
+    "balcony_bronze": "#8C785B",
+    "entry_oak_light": "#DDD2B9",
+    "entry_oak_dark": "#BAAD92"
   },
   "assumptions": [
     "房间净尺寸3.70×6.20×2.80米，依据记忆与照片推算，非现场测量。",
     "房长由两端各2.10米桌柜与高架床单元，加中段2.00米落地床推算。",
     "两张高架床、两张落地床、四张L形桌及四只双门柜；构件厚度与细部尺寸为视觉近似。",
-    "阳台门上半为磨砂玻璃、下半为金属板；门窗净玻璃合计1.902075平方米。",
+    "阳台门上半为磨砂玻璃、下半为古铜棕横向压纹铝合金板；门窗净玻璃合计1.902075平方米。",
     "两台吸顶网罩风扇仅用于静态摆姿；座体和摇头机构为近似，非可制造结构或运动校核。",
     "开门方向、遮挡切换与灯光为显示设置；渲染不用于照度、气流或热计算。"
   ]

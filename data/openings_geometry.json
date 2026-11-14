@@ -38,20 +38,20 @@
   "source": "scene/参数.json; geometry inferred from memory and photographs, not measured",
   "thermal_assumptions": {
     "u_metal_W_m2K": {
-      "baseline": 5.0,
+      "baseline": 5.7,
       "range": [
         3.0,
         7.0
       ],
-      "basis": "assumed overall conductance including films; no measured door construction"
+      "basis": "assumed overall aluminum profile door without confirmed insulating core; generic surface-film resistance gives order 5.9 W/(m2 K), not a measured product value"
     },
     "metal_solar_absorptance": {
-      "baseline": 0.45,
+      "baseline": 0.7,
       "range": [
-        0.2,
-        0.7
+        0.5,
+        0.9
       ],
-      "basis": "assumed; display color does not establish broadband solar absorptance"
+      "basis": "assumed dark bronze finish; generic brown-painted surfaces provide only a magnitude reference, not a measured value for this aluminum door"
     },
     "u_frame_W_m2K": {
       "baseline": 5.7,
@@ -62,14 +62,19 @@
       "basis": "assumed"
     },
     "frame_solar_absorptance": {
-      "baseline": 0.3,
+      "baseline": 0.48,
       "range": [
-        0.15,
-        0.65
+        0.3,
+        0.75
       ],
-      "basis": "assumed"
+      "basis": "assumed aggregate for light window frames and dark bronze aluminum door frames; area-weighted nominal value about0.48, not a color measurement"
     },
     "opaque_branch": "no transmitted shortwave; steady sol-air conduction; heat storage neglected",
-    "source_method": "https://energyplus.readthedocs.io/en/stable/guides/input-output-reference/1.10-group-thermal-zone-descriptiongeometry.html"
-  }
+    "source_method": "https://energyplus.readthedocs.io/en/stable/guides/input-output-reference/1.10-group-thermal-zone-descriptiongeometry.html",
+    "sources": {
+      "film_coefficients": "https://handbook.ashrae.org/Handbooks/F25/SI/F25_Ch26/F25_Ch26_si.aspx",
+      "brown_surface_reference": "https://www.epa.gov/system/files/documents/2024-10/c7s1_2024final_rlso.pdf"
+    }
+  },
+  "metal_material": "opaque bronze-brown embossed aluminum alloy door infill"
 }

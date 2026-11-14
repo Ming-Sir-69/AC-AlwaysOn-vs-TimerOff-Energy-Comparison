@@ -37,12 +37,18 @@ M['wood']=material('wood','wood_light',.52);n=M['wood'].node_tree.nodes;l=M['woo
 M['door_wood']=M['wood'].copy();M['door_wood'].name='vertical_door_wood'
 for node in M['door_wood'].node_tree.nodes:
  if node.bl_idname=='ShaderNodeVectorMath' and node.operation=='MULTIPLY':node.inputs[1].default_value=(40,3,1.3)
+# Entry door is coated metal with pale oak decor, independent of furniture wood.
+for node in M['door_wood'].node_tree.nodes:
+ if node.bl_idname=='ShaderNodeValToRGB':
+  node.color_ramp.elements[0].color=rgb(P['palette']['entry_oak_dark']);node.color_ramp.elements[1].color=rgb(P['palette']['entry_oak_light'])
+M['door_black']=material('door_black_hardware','#252524',.42,.35)
+M['bronze_rib']=material('bronze_pressed_rib','#806E54',.44,.78)
 M['fabric']=material('fabric','fabric',.96);n=M['fabric'].node_tree.nodes;l=M['fabric'].node_tree.links;tc=n.new('ShaderNodeTexCoord');sep=n.new('ShaderNodeSeparateXYZ');l.new(tc.outputs['Object'],sep.inputs[0]);stripes=[]
 for axis in ['X','Y']:
  mul=n.new('ShaderNodeMath');mul.operation='MULTIPLY';mul.inputs[1].default_value=2*math.pi/.045;l.new(sep.outputs[axis],mul.inputs[0]);sn=n.new('ShaderNodeMath');sn.operation='SINE';l.new(mul.outputs[0],sn.inputs[0]);ab=n.new('ShaderNodeMath');ab.operation='ABSOLUTE';l.new(sn.outputs[0],ab.inputs[0]);gt=n.new('ShaderNodeMath');gt.operation='GREATER_THAN';gt.inputs[1].default_value=.965;l.new(ab.outputs[0],gt.inputs[0]);stripes.append(gt)
 mx=n.new('ShaderNodeMath');mx.operation='MAXIMUM';l.new(stripes[0].outputs[0],mx.inputs[0]);l.new(stripes[1].outputs[0],mx.inputs[1]);mix=n.new('ShaderNodeMixRGB');mix.inputs[1].default_value=rgb(P['palette']['fabric']);mix.inputs[2].default_value=rgb(P['palette']['fabric_line']);l.new(mx.outputs[0],mix.inputs[0]);l.new(mix.outputs[0],n['Surface'].inputs['Base Color']);micro(M['fabric'],450,.22,.0008)
-M['balcony_titanium']=material('balcony_brushed_titanium','balcony_titanium',.36,.85)
-n=M['balcony_titanium'].node_tree.nodes;l=M['balcony_titanium'].node_tree.links;tc=n.new('ShaderNodeTexCoord');vm=n.new('ShaderNodeVectorMath');vm.operation='MULTIPLY';vm.inputs[1].default_value=(900,900,3);l.new(tc.outputs['Object'],vm.inputs[0]);no=n.new('ShaderNodeTexNoise');no.inputs['Scale'].default_value=1;no.inputs['Detail'].default_value=2;l.new(vm.outputs[0],no.inputs['Vector']);bu=n.new('ShaderNodeBump');bu.inputs['Strength'].default_value=.13;bu.inputs['Distance'].default_value=.0002;l.new(no.outputs['Fac'],bu.inputs['Height']);l.new(bu.outputs[0],n['Surface'].inputs['Normal'])
+M['balcony_aluminum']=material('balcony_champagne_bronze','balcony_bronze',.38,.78)
+n=M['balcony_aluminum'].node_tree.nodes;l=M['balcony_aluminum'].node_tree.links;tc=n.new('ShaderNodeTexCoord');vm=n.new('ShaderNodeVectorMath');vm.operation='MULTIPLY';vm.inputs[1].default_value=(900,900,3);l.new(tc.outputs['Object'],vm.inputs[0]);no=n.new('ShaderNodeTexNoise');no.inputs['Scale'].default_value=1;no.inputs['Detail'].default_value=2;l.new(vm.outputs[0],no.inputs['Vector']);bu=n.new('ShaderNodeBump');bu.inputs['Strength'].default_value=.13;bu.inputs['Distance'].default_value=.0002;l.new(no.outputs['Fac'],bu.inputs['Height']);l.new(bu.outputs[0],n['Surface'].inputs['Normal'])
 M['glass']=material('frosted_glass','#C9D9D6',.48);M['glass'].node_tree.nodes['Surface'].inputs['Transmission Weight'].default_value=.92
 M['lamp']=material('lamp','#F2F0E6',.4);M['lamp'].node_tree.nodes['Surface'].inputs['Emission Color'].default_value=(1,.95,.85,1);M['lamp'].node_tree.nodes['Surface'].inputs['Emission Strength'].default_value=3
 M['damp']=M['skirt'].copy();M['damp'].name='damp_skirt';n=M['damp'].node_tree.nodes;l=M['damp'].node_tree.links;geo=n.new('ShaderNodeNewGeometry');sep=n.new('ShaderNodeSeparateXYZ');l.new(geo.outputs['Position'],sep.inputs[0]);z=n.new('ShaderNodeMapRange');z.clamp=True;z.inputs['From Min'].default_value=0;z.inputs['From Max'].default_value=.45;z.inputs['To Min'].default_value=.55;z.inputs['To Max'].default_value=0;l.new(sep.outputs['Z'],z.inputs['Value']);no=n.new('ShaderNodeTexNoise');no.inputs['Scale'].default_value=14;no.inputs['Detail'].default_value=5;l.new(geo.outputs['Position'],no.inputs['Vector']);ramp=n.new('ShaderNodeValToRGB');ramp.color_ramp.elements[0].position=.55;ramp.color_ramp.elements[1].position=.7;l.new(no.outputs['Fac'],ramp.inputs[0]);mul=n.new('ShaderNodeMath');mul.operation='MULTIPLY';l.new(z.outputs[0],mul.inputs[0]);l.new(ramp.outputs[0],mul.inputs[1]);mix=n.new('ShaderNodeMixRGB');mix.inputs[1].default_value=rgb(P['palette']['skirt']);mix.inputs[2].default_value=rgb(P['palette']['damp']);l.new(mul.outputs[0],mix.inputs[0]);l.new(mix.outputs[0],n['Surface'].inputs['Base Color'])
@@ -245,21 +251,39 @@ def build_shell():
   rig=bpy.data.objects.new('door_pose_'+side,None);ACTIVE.objects.link(rig);rig.name=ACTIVE.name+'/door_pose_'+side;rig.location=(x0,yy,0);rig.rotation_euler.z=ang;rig['role']='door_rig';rig['wall_owner']=side
   def leafbox(name,loc,size,mat):
    ob=box(name,loc,size,mat,'door',side);ob.parent=rig;return ob
-  if side=='near':leafbox('entry_leaf',(ww/2,0,hh/2),(ww,th,hh),'door_wood')
+  if side=='near':
+   leafbox('entry_leaf',(ww/2,0,hh/2),(ww,th,hh),'door_wood')
+   # One tall stamped panel with a bevelled border and four recessed horizontal seams.
+   verts=[];faces=[]
+   for inset,y,z0,z1 in [(.14,th/2+.0002,.22,hh-.20),(.17,th/2+.011,.25,hh-.23),(.19,th/2+.003,.27,hh-.25)]:
+    verts.extend([(inset,y,z0),(ww-inset,y,z0),(ww-inset,y,z1),(inset,y,z1)])
+   for ring in range(2):
+    for k in range(4):faces.append((ring*4+k,ring*4+(k+1)%4,(ring+1)*4+(k+1)%4,(ring+1)*4+k))
+   me=bpy.data.meshes.new('stamped_entry_panel');me.from_pydata(verts,[],faces);me.update();ob=bpy.data.objects.new('entry_panel_bevel',me);ACTIVE.objects.link(ob);ob.name=ACTIVE.name+'/entry_panel_bevel';me.materials.append(M['door_wood']);ob.parent=rig;ob['role']='door';ob['wall_owner']=side
+   z0=.27;z1=hh-.25;gap=.004;seg=(z1-z0-4*gap)/5
+   for j in range(5):leafbox('entry_panel_section',(ww/2,th/2+.0015,z0+j*(seg+gap)+seg/2),(ww-.38,.003,seg),'door_wood')
   else:
    split=hh*O['balcony_split_fraction'];bottom=split+O['balcony_crossbar']/2;top=hh-O['leaf_frame']
    leafbox('balcony_glass',(ww/2,0,(bottom+top)/2),(ww-2*O['leaf_frame'],O['glass'],top-bottom),'glass')
-   leafbox('balcony_metal_lower',(ww/2,0,split/2),(ww,th,split),'balcony_titanium')
-   for uu in [O['leaf_frame']/2,ww-O['leaf_frame']/2]:leafbox('balcony_leaf_stile',(uu,0,hh/2),(O['leaf_frame'],th,hh),'balcony_titanium')
-   leafbox('balcony_leaf_top',(ww/2,0,hh-O['leaf_frame']/2),(ww,th,O['leaf_frame']),'balcony_titanium')
-   leafbox('balcony_midrail',(ww/2,0,split),(ww,th,O['balcony_crossbar']),'balcony_titanium')
+   leafbox('balcony_metal_lower',(ww/2,0,split/2),(ww,th,split),'balcony_aluminum')
+   # Horizontal relief stamped into the lower metal infill; no open louvers.
+   for j in range(int((split-.14)/O['balcony_rib_pitch'])):
+    z=.075+j*O['balcony_rib_pitch'];leafbox('balcony_horizontal_rib',(ww/2,-th/2-O['balcony_rib_relief']/2,z),(ww-2*O['leaf_frame'],O['balcony_rib_relief'],.005),'bronze_rib')
+   for z in [.28,hh-.28]:
+    ob=tube('balcony_right_hinge',[(ww-.008,-th/2,z-.04),(ww-.008,-th/2,z+.04)],.009,'balcony_aluminum','door',side);ob.parent=rig
+   for uu in [O['leaf_frame']/2,ww-O['leaf_frame']/2]:leafbox('balcony_leaf_stile',(uu,0,hh/2),(O['leaf_frame'],th,hh),'balcony_aluminum')
+   leafbox('balcony_leaf_top',(ww/2,0,hh-O['leaf_frame']/2),(ww,th,O['leaf_frame']),'balcony_aluminum')
+   leafbox('balcony_midrail',(ww/2,0,split),(ww,th,O['balcony_crossbar']),'balcony_aluminum')
   sg=1 if side=='near' else -1;hu=ww-O['handle_offset'] if side=='near' else O['handle_offset'];hv=sg*(th/2+O['handle_plate_thickness']/2)
-  leafbox('door_handle_plate',(hu,hv,O['handle_height']),(O['handle_plate_width'],O['handle_plate_thickness'],O['handle_plate_height']),'steel' if side=='near' else 'balcony_titanium')
+  leafbox('door_handle_plate',(hu,hv,O['handle_height']),(O['handle_plate_width'],O['handle_plate_thickness'],O['handle_plate_height']),'steel' if side=='near' else 'door_black')
   if side=='far':
-   ob=tube('balcony_L_lever',[(hu,sg*th/2,O['handle_height']),(hu,sg*(th/2+O['handle_projection']),O['handle_height']),(hu+O['handle_length'],sg*(th/2+O['handle_projection']),O['handle_height'])],O['handle_radius'],'balcony_titanium','door',side);ob.parent=rig
+   ob=tube('balcony_L_lever',[(hu,sg*th/2,O['handle_height']),(hu,sg*(th/2+O['handle_projection']),O['handle_height']),(hu+O['handle_length'],sg*(th/2+O['handle_projection']),O['handle_height'])],O['handle_radius'],'door_black','door',side);ob.parent=rig
   else:ob=tube('door_lever',[(hu-O['handle_length']/2,sg*(th/2+O['handle_projection']),O['handle_height']),(hu+O['handle_length']/2,sg*(th/2+O['handle_projection']),O['handle_height'])],O['handle_radius'],'steel','door',side);ob.parent=rig
-  for x in [W/2-ww/2,W/2+ww/2]:box('door_jamb',(x,yy,hh/2),(O['door_frame'],t,hh),'ivory' if side=='near' else 'balcony_titanium','door_frame',side)
-  box('door_head',(W/2,yy,hh),(ww,t,O['door_frame']),'ivory' if side=='near' else 'balcony_titanium','wall_head',side)
+  for x in [W/2-ww/2,W/2+ww/2]:box('door_jamb',(x,yy,hh/2),(O['door_frame'],t,hh),'door_wood' if side=='near' else 'balcony_aluminum','door_frame',side)
+  box('door_head',(W/2,yy,hh),(ww,t,O['door_frame']),'door_wood' if side=='near' else 'balcony_aluminum','wall_head',side)
+  if side=='far':
+   rig.location.x=x0+ww;rig.rotation_euler.z=-ang
+   for child in list(rig.children):child.location.x-=ww
  a=P['ac'];al=O['window_start_x']+O['window_width']+O['window_gap']-O['window_frame']/2;ar=W/2;aw=ar-al;ax=(al+ar)/2;ah=a['height']*aw/a['width'];ad=a['depth']*aw/a['width']
  box('AC',(ax,L-ad/2,a['center_z']),(aw,ad,ah),'ivory','ac','far');box('AC_outlet',(ax,L-ad-.002,a['center_z']-ah*.25),(aw*.86,.006,a['outlet_height']),'skirting','ac','far')
  li=P['lights']

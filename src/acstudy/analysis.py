@@ -16,8 +16,8 @@ BOUNDS = {
     'width':(3.6,4.4),'length':(6.0,6.4),'height':(2.6,3.2),'window_area':(1.6,2.4),
     'evening_return_minutes':(0.,60.),'lunch_arrival_minutes':(0.,15.),
     'manual_delay_minutes':(0.,5.),'g_mass':(200.,800.),
-    'u_metal':(3.,7.),'metal_absorptance':(.20,.70),
-    'u_frame':(3.,7.),'frame_absorptance':(.15,.65)}
+    'u_metal':(3.,7.),'metal_absorptance':(.50,.90),
+    'u_frame':(3.,7.),'frame_absorptance':(.30,.75)}
 LABELS = ['墙体传热','换气','建筑内蓄热','四套家具蓄热','朝向','额定能效',
           '制冷能力','室外温度','午休返回概率','盘管温度','盘管风量','启动爬升',
           '设定温度','顶层情景','转角情景','玻璃太阳得热','净宽','净长','净高',
