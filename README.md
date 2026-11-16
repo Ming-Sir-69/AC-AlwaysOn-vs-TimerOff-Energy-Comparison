@@ -40,7 +40,9 @@
 
 ## 03　看图
 
-**一天里的室温与湿度。**工作日短休无人，来电不会自动制冷，午休回来才开机。曲线为 30 分钟滑动平均，统计仍用一分钟数据。
+### 一天里的室温与湿度
+
+工作日短休无人，来电不会自动制冷，午休回来才开机。曲线为 30 分钟滑动平均，统计仍用一分钟数据。
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/02_一天室温_暗_窄.svg">
@@ -56,7 +58,7 @@
   <img src="figures/03_一天湿度_亮.svg" alt="午休开机的示例里，湿度约从81%降到54%" width="830">
 </picture>
 
-**休息日在屋里要承受什么。**
+### 休息日在屋里要承受什么
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/04_休息日_暗_窄.svg">
@@ -65,7 +67,7 @@
   <img src="figures/04_休息日_亮.svg" alt="休息日人在屋里，季内最高温约32.9度" width="830">
 </picture>
 
-**规则之间怎样取舍。**
+### 规则之间怎样取舍
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/05_规则取舍_暗_窄.svg">
@@ -74,7 +76,7 @@
   <img src="figures/05_规则取舍_亮.svg" alt="自己开关空调比强制断电，每季多用约72度、少受热约406℃·时" width="830">
 </picture>
 
-**哪些假设最影响结论。**
+### 哪些假设最影响结论
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/06_影响因素_暗_窄.svg">
