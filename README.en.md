@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="readme-assets/cover-en-dark.png">
-  <img src="readme-assets/cover-en-light.png" alt="Leave the AC on, or cut it on schedule? Dorm power cuts vs. switching it yourself: only 72 kWh a season apart." width="100%">
+  <img src="readme-assets/cover-en-light.png" alt="Let people switch the AC, or cut the power on schedule? Cut even on summer weekends, rooms reach about 91°F; switching it yourself costs only 72 kWh more a season." width="100%">
 </picture>
 
 <p align="center">
@@ -29,10 +29,11 @@ Honestly, it is a bit absurd. To get to use the air conditioner, I first had to 
 
 ## Results
 
-**On workdays, the scheduled cut and "switch it off when you leave" use almost the same energy; the extra use falls on rest days when people are in the room.**
+**The dispute is not whether to run the AC but when it may run. On workdays, the scheduled cut and "switch it off when you leave" use almost the same energy; the extra use falls on rest days and after work, exactly when people are in the room but the power is off.**
 
-- Fixed-speed unit: switching it yourself uses about **72 kWh** more per season than the scheduled cut (43–123), about 1.4 kWh per rest day. In return, people can keep the AC on during rest days instead of waiting for power.
+- Fixed-speed unit: letting people switch it themselves uses about **72 kWh** more per season than the scheduled cut (43–123), about 1.4 kWh per rest day. In return, people can keep the AC on during rest days instead of waiting for power.
 - Inverter unit: about 56 kWh more per season (35–90).
+- Under the scheduled cut, the season peak on rest days with people in the room is about **91°F** (32.9°C; range 87–98°F).
 - Workday difference: median 0.03 kWh/day, roughly zero; thermal storage across days and a little standby keep it from being exactly zero.
 
 Basis: medians (5–95% scenario range), not measured confidence intervals; 128 paired parameter samples, west-facing ±30°, second floor not top, one exterior wall; three room sizes, two AC types and seven rules computed in pairs with shared occupancy calendars and weather.
@@ -43,6 +44,27 @@ Basis: medians (5–95% scenario range), not measured confidence intervals; 128 
   <source media="(prefers-color-scheme: dark)" srcset="figures/00_主结论_暗.svg">
   <img src="figures/00_主结论_亮.svg" alt="Switching the AC yourself uses about 72 kWh more per season than the scheduled cut" width="830">
 </picture>
+
+## The dorm, rebuilt at real size
+
+Net room size 3.70 × 6.20 × 2.80 m: a 2.10 m desk-and-loft unit at each end and a 2.00 m floor-bed section in the middle make up the 6.20 m length. Two loft beds, two floor beds, four L-shaped desks and four double lockers provide the thermal mass and occupant heat of four people; two frosted windows and the upper half of the balcony door give 1.90 m² of net glazing, and the dark aluminium lower door panel and frames are a separate opaque heat path.
+
+![Top view](scene/images/overview.jpg)
+
+![From the entrance](scene/images/entry.jpg)
+
+<details>
+<summary><b>More views: from the balcony, left wall, right wall</b></summary>
+
+![From the balcony](scene/images/balcony.jpg)
+
+![Left wall](scene/images/left.jpg)
+
+![Right wall](scene/images/right.jpg)
+
+</details>
+
+<sub>Rebuilt in Blender from memory and photos; dimensions are estimates. The renders themselves are not used in the heat calculation, which uses the same dimensions and component parameters.</sub>
 
 ## How it was computed
 
