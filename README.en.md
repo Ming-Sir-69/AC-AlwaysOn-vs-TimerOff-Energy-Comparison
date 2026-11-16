@@ -23,38 +23,30 @@
   <a href="README.md">简体中文</a> · <b>English</b>
 </p>
 
-Our factory dorm has a rule: power is cut whenever the work shift starts, weekends included, and comes back only at break time. I wanted the rule dropped. Saying "it's hot" got nowhere, so I did the sums: which uses more electricity, leaving the AC on or cutting it on schedule?
+# Dorm air conditioning: self-switching vs. scheduled power cuts, energy use and indoor heat and humidity
 
-Honestly, it is a bit absurd. To get to use the air conditioner, I first had to run a study.
+This study compares two power rules for a four-person factory dormitory room in southern China: cutting power to the whole room during working hours (rest days included), and supplying power all day while occupants switch the air conditioner themselves. A minute-step model with a three-node thermal network and a humidity node computes air-conditioning energy and indoor temperature and humidity over one cooling season (184 days) for 128 paired parameter scenarios.
 
-## Results
+## Main results
 
-**The dispute is not whether to run the AC but when it may run. On workdays, the scheduled cut and "switch it off when you leave" use almost the same energy; the extra use falls on rest days and after work, exactly when people are in the room but the power is off.**
+**The two rules differ mainly on rest days and after work, when occupants are in the room but the power is cut; on workdays their energy use is essentially the same.**
 
-- Fixed-speed unit: letting people switch it themselves uses about **72 kWh** more per season than the scheduled cut (43–123), about 1.4 kWh per rest day. In return, people can keep the AC on during rest days instead of waiting for power.
-- Inverter unit: about 56 kWh more per season (35–90).
-- Under the scheduled cut, the season peak on rest days with people in the room is about **91°F** (32.9°C; range 87–98°F).
-- Workday difference: median 0.03 kWh/day, roughly zero; thermal storage across days and a little standby keep it from being exactly zero.
+- Workdays: median difference in daily energy, 0.03 kWh.
+- Season: with a fixed-speed unit, self-switching uses **72 kWh** more than the scheduled cut (43–123); with an inverter unit, 56 kWh (35–90).
+- Rest days: under the scheduled cut, the season peak indoor temperature during occupied hours is **91°F** (32.9°C; 87–98°F).
 
-Basis: medians (5–95% scenario range), not measured confidence intervals; 128 paired parameter samples, west-facing ±30°, second floor not top, one exterior wall; three room sizes, two AC types and seven rules computed in pairs with shared occupancy calendars and weather.
+Basis: median (5–95% scenario range) over 128 paired parameter samples (west-facing ±30°, second floor not top, one exterior wall); three room sizes, two unit types and seven rules share occupancy calendars and weather. Ranges reflect parameter uncertainty, not confidence intervals.
 
-<picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/00_主结论_暗_窄.svg">
-  <source media="(max-width: 600px)" srcset="figures/00_主结论_亮_窄.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="figures/00_主结论_暗.svg">
-  <img src="figures/00_主结论_亮.svg" alt="Switching the AC yourself uses about 72 kWh more per season than the scheduled cut" width="830">
-</picture>
+## Study object
 
-## The dorm, rebuilt at real size
-
-Net room size 3.70 × 6.20 × 2.80 m: a 2.10 m desk-and-loft unit at each end and a 2.00 m floor-bed section in the middle make up the 6.20 m length. Two loft beds, two floor beds, four L-shaped desks and four double lockers provide the thermal mass and occupant heat of four people; two frosted windows and the upper half of the balcony door give 1.90 m² of net glazing, and the dark aluminium lower door panel and frames are a separate opaque heat path.
+Net room size 3.70 × 6.20 × 2.80 m: a 2.10 m desk-and-loft unit at each end and a 2.00 m floor-bed section in the middle. Two loft beds, two floor beds, four L-shaped desks and four double lockers form the thermal mass and occupant heat sources of four people; two frosted windows and the upper half of the balcony door give 1.90 m² of net glazing, and the dark aluminium lower door panel and frames are modelled as a separate opaque heat path.
 
 ![Top view](scene/images/overview.jpg)
 
 ![From the entrance](scene/images/entry.jpg)
 
 <details>
-<summary><b>More views: from the balcony, left wall, right wall</b></summary>
+<summary><b>Other views: balcony, left wall, right wall</b></summary>
 
 ![From the balcony](scene/images/balcony.jpg)
 
@@ -64,15 +56,13 @@ Net room size 3.70 × 6.20 × 2.80 m: a 2.10 m desk-and-loft unit at each end an
 
 </details>
 
-<sub>Rebuilt in Blender from memory and photos; dimensions are estimates. The renders themselves are not used in the heat calculation, which uses the same dimensions and component parameters.</sub>
+## Method
 
-## How it was computed
-
-- The room is rebuilt at its real size: 3.70 × 6.20 × 2.80 m, four people, two loft beds, two floor beds, four L-shaped desks, four double lockers; balcony facing west, 1.90 m² net glazing.
+- Geometry and components: dimensions, furniture and openings as described above; balcony facing west (270° ±30°).
 - Heat and moisture model: three thermal nodes (air; interior walls and furniture; exterior wall and roof) plus air humidity and coil water; one-minute integration driven by hourly weather.
-- Real schedule: four power cuts a day; after power returns, the AC must be switched on by hand; nobody is in the room during the two 10-minute workday windows.
-- Fixed-speed and inverter units, with minimum on/off times, part-load efficiency and dehumidification.
-- Parameters, sources and which inputs are assumptions: [Model &amp; sources](模型与来源.md) (Chinese).
+- Power and occupancy: four cuts a day (08:00–10:30, 10:40–12:00, 13:30–15:00, 15:10–17:30); after power returns the unit must be switched on by hand, and the room is unoccupied during the two 10-minute workday windows.
+- Units: fixed-speed and inverter, with minimum on/off times, part-load efficiency and dehumidification.
+- Parameter values, sources and assumed ranges: [Model &amp; sources](模型与来源.md) (Chinese).
 
 ## Figures
 
@@ -80,7 +70,7 @@ Figure text is in Chinese; each title states its finding.
 
 ### Indoor temperature and humidity over a day
 
-On workdays nobody is in during the short breaks, so the AC does not cool when power returns; it is switched on only when people come back at lunch. Curves are 30-minute moving averages; statistics use one-minute data.
+During the short workday power windows the room is unoccupied and the unit stays off; it is switched on when occupants return at lunch. Curves are 30-minute moving averages.
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/02_一天室温_暗_窄.svg">
@@ -96,7 +86,7 @@ On workdays nobody is in during the short breaks, so the AC does not cool when p
   <img src="figures/03_一天湿度_亮.svg" alt="In the lunch-break example, relative humidity falls from about 81% to 54%" width="830">
 </picture>
 
-### What a rest day in the room is like
+### Indoor temperature during occupied rest-day hours
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/04_休息日_暗_窄.svg">
@@ -105,7 +95,7 @@ On workdays nobody is in during the short breaks, so the AC does not cool when p
   <img src="figures/04_休息日_亮.svg" alt="On rest days with people in the room, the season peak is about 32.9 °C" width="830">
 </picture>
 
-### Trade-offs between rules
+### Energy and heat exposure by rule
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/05_规则取舍_暗_窄.svg">
@@ -114,7 +104,7 @@ On workdays nobody is in during the short breaks, so the AC does not cool when p
   <img src="figures/05_规则取舍_亮.svg" alt="Switching it yourself: about 72 kWh more per season, about 406 °C·h less heat exposure" width="830">
 </picture>
 
-### Which assumptions matter most
+### Sensitivity
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/06_影响因素_暗_窄.svg">
@@ -125,13 +115,13 @@ On workdays nobody is in during the short breaks, so the AC does not cool when p
 
 ## Limitations
 
-- No on-site energy or temperature/humidity calibration, and no cross-check against EnergyPlus or similar tools; the numbers are model scenarios with assumptions, not dorm measurements.
-- Dimensions, glazing area, unit performance curves, window/door opening and return times are not measured; the number of storeys is unknown, so the second floor is treated as not the top floor.
-- Fan comfort after power cuts, heat exchange with neighbouring rooms and sky long-wave radiation are not modelled.
+- The model is not calibrated against on-site energy or temperature/humidity measurements, nor cross-checked against EnergyPlus or similar tools; results hold under the modelled boundary conditions.
+- Ventilation rate, floor position (treated as not the top floor) and unit performance curves are assumptions. In the sensitivity analysis, ventilation has the largest effect on savings, followed by rated efficiency.
+- Top-floor and corner rooms show markedly larger differences; see the comparison tables in the Chinese README.
 
-## Run it yourself
+## Reproduction
 
-Requires Python 3.12 and uv. From the repository root:
+Environment: Python 3.12 and uv. From the repository root:
 
 ```sh
 uv run --frozen python -m pytest -q
@@ -144,7 +134,7 @@ uv run --frozen python render_figures.py --report
 
 The full tables (orientation and roof/corner comparisons, energy by rule, recovery in each power window, rest-day exposure, room-size comparison, cycling and sensitivity) are in the [Chinese README](README.md#详细数据), folded under 详细数据. Raw results are in `results/`.
 
-## What is in the repository
+## Repository structure
 
 | Path | Contents |
 |---|---|
