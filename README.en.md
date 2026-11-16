@@ -11,12 +11,12 @@
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-1B74B5?style=flat-square"></a>
-  <img alt="Text CC BY 4.0" src="https://img.shields.io/badge/text%20%26%20figures-CC%20BY%204.0-1B74B5?style=flat-square">
-  <img alt="Python 3.12" src="https://img.shields.io/badge/python-3.12-2E2A26?style=flat-square">
-  <img alt="uv" src="https://img.shields.io/badge/env-uv-2E2A26?style=flat-square">
-  <img alt="Model" src="https://img.shields.io/badge/model-3--node%20RC%20%2B%20humidity-6B655C?style=flat-square">
-  <img alt="Scenarios" src="https://img.shields.io/badge/scenarios-128%20paired-6B655C?style=flat-square">
+  <a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-F6C555?style=flat-square&labelColor=2E2A26"></a>
+  <img alt="Text CC BY 4.0" src="https://img.shields.io/badge/text%20%26%20figures-CC%20BY%204.0-F6C555?style=flat-square&labelColor=2E2A26">
+  <img alt="Python 3.12" src="https://img.shields.io/badge/python-3.12-6B655C?style=flat-square&labelColor=2E2A26">
+  <img alt="uv" src="https://img.shields.io/badge/env-uv-6B655C?style=flat-square&labelColor=2E2A26">
+  <img alt="Model" src="https://img.shields.io/badge/model-3--node%20RC%20%2B%20humidity-A8A196?style=flat-square&labelColor=2E2A26">
+  <img alt="Scenarios" src="https://img.shields.io/badge/scenarios-128%20paired-A8A196?style=flat-square&labelColor=2E2A26">
 </p>
 
 <p align="center">
