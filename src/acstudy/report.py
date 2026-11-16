@@ -176,7 +176,7 @@ def visual_story(root):
           f'  <img src="figures/{name}_亮.svg" alt="{title}" width="830">\n'
           '</picture>\n')
     blocks=['## 先看图\n',
-      '以下电量与季节峰温图用128组西向±30°样本；二楼按非顶层，单面外墙。日内曲线固定西向270°；敏感性也固定非顶层、单面外墙，只分析西向范围和其余未定输入。受热是有人时超过28度的幅度乘时长，不是健康等级。\n',pic('00_主结论'),
+      '以下电量与季节峰温图用128组西向±30°样本；二楼按非顶层，单面外墙。日内曲线固定西向270°；敏感性也固定非顶层、单面外墙，只分析西向范围和其余未定输入。受热是有人时超过28 °C的幅度乘时长，不是健康等级。\n',pic('00_主结论'),
       '## 一天里的室温与湿度\n',
       '工作日短休无人，两方案均不开机；蓝线按午休及下班返回时间提前30分钟预冷。工作日与休息日上下对齐、共用坐标。这里是定频基准示例；居中的30分钟滑动平均会模糊启停边界，不用它读精确开机时刻或峰值。原始统计仍用一分钟数据。\n',pic('02_一天室温'),pic('03_一天湿度'),
       '## 休息日在屋里要承受什么\n',pic('04_休息日'),
@@ -192,7 +192,7 @@ def opening(base):
     work=paired_values(base,'fixed','precool_restday','workday_kWh')
     rest=paired_values(base,'fixed','precool_restday','restday_kWh')
     extra=paired_values(base,'fixed','precool_restday','energy_kWh')
-    return [f'**按上下班时间提前预冷，并在休息日保持供电。** 定频空调整季比现行规定多用约{extra.median():.0f}度；工作日日均多约{work.median():.2f}度，休息日日均多约{rest.median():.2f}度。预冷提前量基准30分钟、情景10–60分钟。','',
+    return [f'**按上下班时间提前预冷，并在休息日保持供电。** 定频空调整季比现行规定多用约 {extra.median():.0f} kWh；工作日日均多约 {work.median():.2f} kWh，休息日日均多约 {rest.median():.2f} kWh。预冷提前量基准30分钟、情景10–60分钟。','',
      '比较使用共用人员日历、天气和房间参数。预冷只在午休返回日及下班到家前启动，两次短休无人不开机；休息日不按工作日时刻断电。','',
      '没有现场电量或温湿度校准，也没有与成熟建筑仿真工具对算。数字是带假设的模型情景，不是宿舍实测；风扇停转的体感未算。']
 
@@ -201,7 +201,7 @@ def opening(base):
 def building_table(mc):
     rows=['## 朝向、顶层和转角分开看','',
       '二楼、非转角、阳台朝西已确认；总层数未知，非顶层仍为假设。方位为270°±30°。四种工况共用完全相同的128组其他输入、气象和人员日历，朝东只把方位旋转180°，顶层只增加暴露屋面，转角只增加侧外墙及其派生蓄热。三种对照均不是本宿舍已确认状态。','',
-      '|建筑工况|空调|样本数|现行相对一直开节电 %|预冷方案整季多用 度|工作日日均多用 度|休息日日均多用 度|现行休息日季内最高温 °C|',
+      '|建筑工况|空调|样本数|现行相对一直开节电 %|预冷方案整季多用 kWh|工作日日均多用 kWh|休息日日均多用 kWh|现行休息日季内最高温 °C|',
       '|---|---|---|---|---|---|---|---|']
     for case,label in CASES:
       part=mc[(mc.room=='base')&(mc.building_case==case)]
@@ -209,7 +209,7 @@ def building_table(mc):
         cur=part[(part.kind==kind)&(part.policy=='cut_all')]
         rows.append('|'+ '|'.join([label,TYPES[kind],str(len(cur)),qi(cur.saving_pct),qi(paired_values(part,kind,'precool_restday','energy_kWh'),0),qi(paired_values(part,kind,'precool_restday','workday_kWh'),2),qi(paired_values(part,kind,'precool_restday','restday_kWh'),2),qi(cur.rest_peak_C)])+'|')
     rows+=['','下面直接比较同一样本的建筑工况差值；正数表示对照工况比西向基准更高，范围不是两列分位数相减。','',
-      '|相对西向基准|空调|现行整季电量变化 度|预冷方案额外用电变化 度|现行休息日峰温变化 °C|',
+      '|相对西向基准|空调|现行整季电量变化 kWh|预冷方案额外用电变化 kWh|现行休息日峰温变化 °C|',
       '|---|---|---|---|---|']
     west=mc[(mc.room=='base')&(mc.building_case=='west')]
     for case,label in CASES[1:]:
@@ -227,7 +227,7 @@ def timer_table(root):
     scan=pd.read_csv(Path(root)/'results/west_cycle_timer_scan.csv')
     rows=['## 启停次数为什么不能当实机预测','',
      '最短开机时间180–600秒、最短停机时间120–300秒分别做3档，两站共54条定频整季轨迹；其余参数固定为22.94㎡、非顶层、单面外墙、朝西270°的默认值。它是额外确定参数扫描，没有并入主情景区间。下表停机时间固定180秒；完整9组合见 `results/west_cycle_timer_scan.csv`。','',
-     '|气象|最短开机 分钟|一直开每天启动|现行每天启动|一直开开机段10–90% 分钟|现行相对一直开节电 %|自主开关多用 度/季|',
+     '|气象|最短开机 分钟|一直开每天启动|现行每天启动|一直开开机段10–90% 分钟|现行相对一直开节电 %|自主开关多用 kWh/季|',
      '|---|---|---|---|---|---|---|']
     for station in ['shenzhen','guangzhou']:
       for on in [180,300,600]:

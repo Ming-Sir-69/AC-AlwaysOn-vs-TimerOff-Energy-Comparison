@@ -93,7 +93,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/04_休息日_暗_窄.svg">
   <source media="(max-width: 600px)" srcset="figures/04_休息日_亮_窄.svg">
   <source media="(prefers-color-scheme: dark)" srcset="figures/04_休息日_暗.svg">
-  <img src="figures/04_休息日_亮.svg" alt="休息日人在屋里，季内最高温约 32.9°C" width="830">
+  <img src="figures/04_休息日_亮.svg" alt="休息日人在屋里，季内最高温约32.9 °C" width="830">
 </picture>
 
 ### 各规则的电量与热暴露
@@ -102,7 +102,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/05_规则取舍_暗_窄.svg">
   <source media="(max-width: 600px)" srcset="figures/05_规则取舍_亮_窄.svg">
   <source media="(prefers-color-scheme: dark)" srcset="figures/05_规则取舍_暗.svg">
-  <img src="figures/05_规则取舍_亮.svg" alt="预冷方案一季多用约 82 kWh，少受热约449℃·时" width="830">
+  <img src="figures/05_规则取舍_亮.svg" alt="预冷方案一季多用约 82 kWh，少受热约449°C·h" width="830">
 </picture>
 
 ### 敏感性
@@ -151,7 +151,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/附04_变频规则取舍_暗_窄.svg">
   <source media="(max-width: 600px)" srcset="figures/附04_变频规则取舍_亮_窄.svg">
   <source media="(prefers-color-scheme: dark)" srcset="figures/附04_变频规则取舍_暗.svg">
-  <img src="figures/附04_变频规则取舍_亮.svg" alt="预冷方案一季多用约 62 kWh，少受热约507℃·时" width="830">
+  <img src="figures/附04_变频规则取舍_亮.svg" alt="预冷方案一季多用约 62 kWh，少受热约507°C·h" width="830">
 </picture>
 
 </details>
@@ -242,7 +242,7 @@ uv run --frozen python render_figures.py --report
 
 二楼、非转角、阳台朝西已确认；总层数未知，非顶层仍为假设。方位为270°±30°。四种工况共用完全相同的128组其他输入、气象和人员日历，朝东只把方位旋转180°，顶层只增加暴露屋面，转角只增加侧外墙及其派生蓄热。三种对照均不是本宿舍已确认状态。
 
-|建筑工况|空调|样本数|现行相对一直开节电 %|预冷方案整季多用 度|工作日日均多用 度|休息日日均多用 度|现行休息日季内最高温 °C|
+|建筑工况|空调|样本数|现行相对一直开节电 %|预冷方案整季多用 kWh|工作日日均多用 kWh|休息日日均多用 kWh|现行休息日季内最高温 °C|
 |---|---|---|---|---|---|---|---|
 |二楼西向·单面外墙（基准）|定频|128|17.4（10.5–23.3）|82（51–160）|0.11（0.01–0.34）|1.31（0.74–2.31）|32.9（30.6–36.8）|
 |二楼西向·单面外墙（基准）|变频|128|16.4（10.5–21.2）|62（37–117）|0.07（-0.01–0.22）|1.05（0.62–1.67）|33.1（30.6–37.0）|
@@ -255,7 +255,7 @@ uv run --frozen python render_figures.py --report
 
 下面直接比较同一样本的建筑工况差值；正数表示对照工况比西向基准更高，范围不是两列分位数相减。
 
-|相对西向基准|空调|现行整季电量变化 度|预冷方案额外用电变化 度|现行休息日峰温变化 °C|
+|相对西向基准|空调|现行整季电量变化 kWh|预冷方案额外用电变化 kWh|现行休息日峰温变化 °C|
 |---|---|---|---|---|
 |朝东对照·非顶层单面外墙|定频|-13（-29–10）|-2（-5–1）|-1.4（-2.9–-0.5）|
 |朝东对照·非顶层单面外墙|变频|-15（-33–7）|-1（-4–2）|-1.3（-2.8–-0.5）|
@@ -411,7 +411,7 @@ uv run --frozen python render_figures.py --report
 
 最短开机时间180–600秒、最短停机时间120–300秒分别做3档，两站共54条定频整季轨迹；其余参数固定为22.94㎡、非顶层、单面外墙、朝西270°的默认值。它是额外确定参数扫描，没有并入主情景区间。下表停机时间固定180秒；完整9组合见 `results/west_cycle_timer_scan.csv`。
 
-|气象|最短开机 分钟|一直开每天启动|现行每天启动|一直开开机段10–90% 分钟|现行相对一直开节电 %|自主开关多用 度/季|
+|气象|最短开机 分钟|一直开每天启动|现行每天启动|一直开开机段10–90% 分钟|现行相对一直开节电 %|自主开关多用 kWh/季|
 |---|---|---|---|---|---|---|
 |shenzhen|3|142.5|82.4|3.0–3.0|18.4|79|
 |shenzhen|5|87.2|52.8|5.0–5.0|17.3|73|
