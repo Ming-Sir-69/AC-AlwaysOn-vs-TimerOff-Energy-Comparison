@@ -25,7 +25,7 @@
 
 # Dorm air conditioning: self-switching vs. scheduled power cuts, energy use and indoor heat and humidity
 
-This study compares two power rules for a four-person factory dormitory room in southern China: cutting power to the whole room during working hours (rest days included), and supplying power all day while occupants switch the air conditioner themselves. A minute-step model with a three-node thermal network and a humidity node computes air-conditioning energy and indoor temperature and humidity over one cooling season (184 days) for 128 paired parameter scenarios.
+This project compares two power rules for a four-person factory dormitory room in southern China: cutting power to the whole room during working hours (rest days included), and supplying power all day while occupants switch the air conditioner themselves. A minute-step model with a three-node thermal network and a humidity node computes air-conditioning energy and indoor temperature and humidity over one cooling season (184 days) for 128 paired parameter scenarios.
 
 ## Main results
 
@@ -59,10 +59,11 @@ Net room size 3.70 × 6.20 × 2.80 m: a 2.10 m desk-and-loft unit at each end an
 ## Method
 
 - Geometry and components: dimensions, furniture and openings as described above; balcony facing west (270° ±30°).
-- Heat and moisture model: three thermal nodes (air; interior walls and furniture; exterior wall and roof) plus air humidity and coil water; one-minute integration driven by hourly weather.
+- Heat and moisture model: three thermal nodes (air; interior walls and furniture; exterior wall and roof) plus air humidity and coil water; exterior surface heat balance follows the EnergyPlus Engineering Reference<sup>[[1]](#references)</sup>, psychrometric properties follow<sup>[[3]](#references)[[10]](#references)[[11]](#references)</sup>; one-minute integration driven by hourly weather<sup>[[4]](#references)[[5]](#references)</sup>, solar position by the NOAA algorithm<sup>[[8]](#references)</sup>.
 - Power and occupancy: four cuts a day (08:00–10:30, 10:40–12:00, 13:30–15:00, 15:10–17:30); after power returns the unit must be switched on by hand, and the room is unoccupied during the two 10-minute workday windows.
-- Units: fixed-speed and inverter, with minimum on/off times, part-load efficiency and dehumidification.
-- Parameter values, sources and assumed ranges: [Model &amp; sources](模型与来源.md) (Chinese).
+- Units: fixed-speed and inverter, with minimum on/off times, part-load efficiency and coil dehumidification<sup>[[2]](#references)</sup>.
+- Surface film resistance and coating solar absorptance ranges follow the ASHRAE Handbook and EPA AP-42<sup>[[6]](#references)[[7]](#references)</sup>; parameter values, sources and assumed ranges: [Model &amp; sources](模型与来源.md) (Chinese).
+- Sensitivity: Sobol global sensitivity analysis with Saltelli sampling and SALib estimators<sup>[[12]](#references)[[13]](#references)</sup>.
 
 ## Figures
 
@@ -133,6 +134,28 @@ uv run --frozen python render_figures.py --report
 ## Detailed data
 
 The full tables (orientation and roof/corner comparisons, energy by rule, recovery in each power window, rest-day exposure, room-size comparison, cycling and sensitivity) are in the [Chinese README](README.md#详细数据), folded under 详细数据. Raw results are in `results/`.
+
+## Acknowledgements
+
+- Weather data: Shenzhen SWERA and Guangzhou CSWD typical years from the EnergyPlus weather library<sup>[[4]](#references)[[5]](#references)</sup>.
+- Open-source software: NumPy, SciPy, pandas, Matplotlib, Numba, pytest, uv; scene modelling in Blender.
+- Method references: EnergyPlus documentation, PsychroLib, SALib.
+
+## References
+
+1. U.S. Department of Energy. *EnergyPlus Engineering Reference*, v25.1: Outside Surface Heat Balance. <https://bigladdersoftware.com/epx/docs/25-1/engineering-reference/outside-surface-heat-balance.html>
+2. U.S. Department of Energy. *EnergyPlus Engineering Reference*, v25.1: Coils. <https://bigladdersoftware.com/epx/docs/25-1/engineering-reference/coils.html>
+3. U.S. Department of Energy. *EnergyPlus Module Developer Guide*, v25.1: Psychrometric Services. <https://bigladdersoftware.com/epx/docs/25-1/module-developer/psychrometric-services.html>
+4. EnergyPlus Weather Data. Shenzhen 594930, SWERA. <https://energyplus-weather.s3.amazonaws.com/asia_wmo_region_2/CHN/CHN_Guangdong.Shenzhen.594930_SWERA/CHN_Guangdong.Shenzhen.594930_SWERA.epw>
+5. EnergyPlus Weather Data. Guangzhou 592870, CSWD. <https://energyplus-weather.s3.amazonaws.com/asia_wmo_region_2/CHN/CHN_Guangdong.Guangzhou.592870_CSWD/CHN_Guangdong.Guangzhou.592870_CSWD.epw>
+6. ASHRAE. *ASHRAE Handbook—Fundamentals* (SI), Chapter 26: Heat, Air, and Moisture Control in Building Assemblies—Material Properties. <https://handbook.ashrae.org/Handbooks/F25/SI/F25_Ch26/F25_Ch26_si.aspx>
+7. U.S. EPA. *AP-42*, Chapter 7.1: Organic Liquid Storage Tanks, Table 7.1-6 (paint solar absorptance). <https://www.epa.gov/system/files/documents/2024-10/c7s1_2024final_rlso.pdf>
+8. NOAA Global Monitoring Laboratory. *General Solar Position Calculations*. <https://gml.noaa.gov/grad/solcalc/solareqns.PDF>
+9. NOAA Weather Prediction Center. *The Heat Index Equation*. <https://www.wpc.ncep.noaa.gov/heat_index/hi_equation.html>
+10. Alduchov, O. A., &amp; Eskridge, R. E. (1996). Improved Magnus form approximation of saturation vapor pressure. *Journal of Applied Meteorology*, 35(4), 601–609. <https://doi.org/10.1175/1520-0450(1996)035%3C0601:IMFAOS%3E2.0.CO;2>
+11. Meyer, D., &amp; Thevenard, D. (2019). PsychroLib: a library of psychrometric functions to calculate thermodynamic properties of air. *Journal of Open Source Software*, 4(33), 1137. <https://doi.org/10.21105/joss.01137>
+12. Saltelli, A., et al. (2010). Variance based sensitivity analysis of model output. *Computer Physics Communications*, 181(2), 259–270. <https://doi.org/10.1016/j.cpc.2009.09.018>
+13. Herman, J., &amp; Usher, W. (2017). SALib: An open-source Python library for sensitivity analysis. *Journal of Open Source Software*, 2(9), 97. <https://doi.org/10.21105/joss.00097>
 
 ## Repository structure
 

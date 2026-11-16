@@ -25,7 +25,7 @@
 
 # 宿舍空调：自主开关与定时强制断电的能耗和室内热湿对比
 
-本研究比较一间华南厂区四人宿舍的两种供电规则：工作时段整间强制断电（休息日同样执行），与全天供电、由住户自主开关空调。研究采用三节点热网络加湿度节点的逐分钟模型，在 128 组配对参数情景下计算一个制冷季（184 天）的空调电量与室内温湿度。
+本项目比较一间华南厂区四人宿舍的两种供电规则：工作时段整间强制断电（休息日同样执行），与全天供电、由住户自主开关空调。项目采用三节点热网络加湿度节点的逐分钟模型，在 128 组配对参数情景下计算一个制冷季（184 天）的空调电量与室内温湿度。
 
 ## 主要结果
 
@@ -59,10 +59,11 @@
 ## 方法
 
 - 几何与构件：按上节的尺寸、家具与门窗建模，阳台朝西（270° ±30°）。
-- 热湿模型：空气、内墙家具蓄热、外墙屋顶三个热节点，加空气含湿量和盘管存水；一分钟积分，逐时气象驱动。
+- 热湿模型：空气、内墙家具蓄热、外墙屋顶三个热节点，加空气含湿量和盘管存水；外表面热平衡参照 EnergyPlus 工程参考<sup>[[1]](#参考文献)</sup>，湿空气性质计算参照<sup>[[3]](#参考文献)[[10]](#参考文献)[[11]](#参考文献)</sup>；一分钟积分，逐时气象驱动<sup>[[4]](#参考文献)[[5]](#参考文献)</sup>，太阳位置按 NOAA 算法<sup>[[8]](#参考文献)</sup>。
 - 供电与在室：每天四段断电（08:00–10:30、10:40–12:00、13:30–15:00、15:10–17:30）；来电后空调需手动开启，工作日两次 10 分钟供电时无人在室。
-- 机组：定频与变频两类，含最短开停机时间、部分负荷效率与除湿过程。
-- 参数取值、来源与假设范围见 [模型与来源](模型与来源.md)。
+- 机组：定频与变频两类，含最短开停机时间、部分负荷效率与盘管除湿<sup>[[2]](#参考文献)</sup>。
+- 围护结构表面换热与涂层太阳吸收率的取值范围参照 ASHRAE 手册与 EPA AP-42<sup>[[6]](#参考文献)[[7]](#参考文献)</sup>；参数取值、来源与假设范围见 [模型与来源](模型与来源.md)。
+- 敏感性：Sobol 全局敏感性分析，Saltelli 抽样与 SALib 估计<sup>[[12]](#参考文献)[[13]](#参考文献)</sup>。
 
 ## 结果图
 
@@ -289,7 +290,7 @@ uv run --frozen python render_figures.py --report
 
 从实际到家时刻计时，已包含到家后开机反应；不把无人时从17:30送电到回家的延迟说成人在室内等待。温度条件为不高于28°C并持续30分钟；联合条件再要求RH≤65%。均为计算阈值，未含风速、辐射温度、空气质量及个人感受。
 
-|空调|17:30送电时室温 °C|到家时室温 °C|到家RH %|到家热指数 °C|30分钟仍未温度达标 %|90分钟仍未温度达标 %|90分钟仍未联合达标 %|六小时仍未联合达标 %|
+|空调|17:30送电时室温 °C|到家时室温 °C|到家RH %|到家热指数<sup>[[9]](#参考文献)</sup> °C|30分钟仍未温度达标 %|90分钟仍未温度达标 %|90分钟仍未联合达标 %|六小时仍未联合达标 %|
 |---|---|---|---|---|---|---|---|---|
 |定频|29.4（27.6–31.3）|29.4（27.6–31.4）|70.1（61.9–77.2）|33.9（30.8–36.9）|48.9（0.0–95.9）|18.9（0.0–94.4）|25.8（2.3–96.2）|6.8（0.0–94.2）|
 |变频|29.4（27.7–31.4）|29.5（27.8–31.5）|69.4（61.8–76.6）|34.1（31.1–37.2）|8.0（0.0–71.1）|0.0（0.0–40.8）|5.3（0.0–47.0）|2.3（0.0–12.6）|
@@ -432,6 +433,28 @@ uv run --frozen python render_figures.py --report
 二楼、非转角、阳台朝西已经确认；总层数未知，非顶层仍是明确假设。方位精度、净尺寸与层高、玻璃面积、门窗开合、机组曲线和返回延迟仍非实测，是结果的未解决局限；将来有实测温湿度和分项电量后才能进一步校准。
 
 </details>
+
+## 致谢
+
+- 气象数据：EnergyPlus 气象文件库提供的深圳 SWERA 与广州 CSWD 典型年数据<sup>[[4]](#参考文献)[[5]](#参考文献)</sup>。
+- 开源软件：NumPy、SciPy、pandas、Matplotlib、Numba、pytest、uv；场景建模使用 Blender。
+- 方法实现参考：EnergyPlus 工程文档、PsychroLib、SALib。
+
+## 参考文献
+
+1. U.S. Department of Energy. *EnergyPlus Engineering Reference*, v25.1: Outside Surface Heat Balance. <https://bigladdersoftware.com/epx/docs/25-1/engineering-reference/outside-surface-heat-balance.html>
+2. U.S. Department of Energy. *EnergyPlus Engineering Reference*, v25.1: Coils. <https://bigladdersoftware.com/epx/docs/25-1/engineering-reference/coils.html>
+3. U.S. Department of Energy. *EnergyPlus Module Developer Guide*, v25.1: Psychrometric Services. <https://bigladdersoftware.com/epx/docs/25-1/module-developer/psychrometric-services.html>
+4. EnergyPlus Weather Data. Shenzhen 594930, SWERA. <https://energyplus-weather.s3.amazonaws.com/asia_wmo_region_2/CHN/CHN_Guangdong.Shenzhen.594930_SWERA/CHN_Guangdong.Shenzhen.594930_SWERA.epw>
+5. EnergyPlus Weather Data. Guangzhou 592870, CSWD. <https://energyplus-weather.s3.amazonaws.com/asia_wmo_region_2/CHN/CHN_Guangdong.Guangzhou.592870_CSWD/CHN_Guangdong.Guangzhou.592870_CSWD.epw>
+6. ASHRAE. *ASHRAE Handbook—Fundamentals* (SI), Chapter 26: Heat, Air, and Moisture Control in Building Assemblies—Material Properties. <https://handbook.ashrae.org/Handbooks/F25/SI/F25_Ch26/F25_Ch26_si.aspx>
+7. U.S. EPA. *AP-42*, Chapter 7.1: Organic Liquid Storage Tanks, Table 7.1-6 (paint solar absorptance). <https://www.epa.gov/system/files/documents/2024-10/c7s1_2024final_rlso.pdf>
+8. NOAA Global Monitoring Laboratory. *General Solar Position Calculations*. <https://gml.noaa.gov/grad/solcalc/solareqns.PDF>
+9. NOAA Weather Prediction Center. *The Heat Index Equation*. <https://www.wpc.ncep.noaa.gov/heat_index/hi_equation.html>
+10. Alduchov, O. A., &amp; Eskridge, R. E. (1996). Improved Magnus form approximation of saturation vapor pressure. *Journal of Applied Meteorology*, 35(4), 601–609. <https://doi.org/10.1175/1520-0450(1996)035%3C0601:IMFAOS%3E2.0.CO;2>
+11. Meyer, D., &amp; Thevenard, D. (2019). PsychroLib: a library of psychrometric functions to calculate thermodynamic properties of air. *Journal of Open Source Software*, 4(33), 1137. <https://doi.org/10.21105/joss.01137>
+12. Saltelli, A., et al. (2010). Variance based sensitivity analysis of model output. *Computer Physics Communications*, 181(2), 259–270. <https://doi.org/10.1016/j.cpc.2009.09.018>
+13. Herman, J., &amp; Usher, W. (2017). SALib: An open-source Python library for sensitivity analysis. *Journal of Open Source Software*, 2(9), 97. <https://doi.org/10.21105/joss.00097>
 
 ## 仓库结构
 
