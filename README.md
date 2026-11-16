@@ -1,19 +1,33 @@
 <picture>
-  <source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="https://raw.githubusercontent.com/Ming-Sir-69/Ming-Sir-69/main/readme-assets/cards/ac-energy-dark-mobile.svg">
-  <source media="(max-width: 600px)" srcset="https://raw.githubusercontent.com/Ming-Sir-69/Ming-Sir-69/main/readme-assets/cards/ac-energy-light-mobile.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ming-Sir-69/Ming-Sir-69/main/readme-assets/cards/ac-energy-dark.svg">
-  <img src="https://raw.githubusercontent.com/Ming-Sir-69/Ming-Sir-69/main/readme-assets/cards/ac-energy-light.svg" alt="空调研究：宿舍按实际尺寸建模，铅笔起稿转为墨线，剖面里冷气下沉、断电后热气上浮，结论是自己开关比强制断电一季多用约 72 度。" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="readme-assets/cover-zh-dark.png">
+  <img src="readme-assets/cover-zh-light.png" alt="空调开着，还是到点就关？宿舍到点断电，和自己开关空调，一季只差 72 度。" width="100%">
 </picture>
 
-# 空调一直开着，还是到点就关？
+<p align="center">
+  <a href="模型与来源.md">模型与来源</a> ·
+  <a href="results/">结果数据</a> ·
+  <a href="figures/">全部图表</a> ·
+  <a href="https://github.com/Ming-Sir-69">作者主页</a>
+</p>
 
-中文 · English（整理中）
+<p align="center">
+  <a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-1B74B5?style=flat-square"></a>
+  <img alt="Text CC BY 4.0" src="https://img.shields.io/badge/text%20%26%20figures-CC%20BY%204.0-1B74B5?style=flat-square">
+  <img alt="Python 3.12" src="https://img.shields.io/badge/python-3.12-2E2A26?style=flat-square">
+  <img alt="uv" src="https://img.shields.io/badge/env-uv-2E2A26?style=flat-square">
+  <img alt="Model" src="https://img.shields.io/badge/model-3--node%20RC%20%2B%20humidity-6B655C?style=flat-square">
+  <img alt="Scenarios" src="https://img.shields.io/badge/scenarios-128%20paired-6B655C?style=flat-square">
+</p>
+
+<p align="center">
+  <b>简体中文</b> · <a href="README.en.md">English</a>
+</p>
 
 厂区宿舍有条规定：一到上班时间就断电，周六周日也一样，到了休息时间才能再开。我想让他们取消这条规定。光说热没人听，只好去算：一直开着和到点关掉，到底哪个更费电。
 
 说实话挺无奈的。想吹上空调，得先做一个研究。
 
-## 01　结论
+## 结论
 
 **工作日里，强制断电和“人走自己关”耗电几乎一样；多用的电集中在休息日白天有人时。**
 
@@ -30,7 +44,7 @@
   <img src="figures/00_主结论_亮.svg" alt="自己开关空调，比强制断电一季多用约72度" width="830">
 </picture>
 
-## 02　怎么算的
+## 怎么算的
 
 - 房间按实际尺寸重建：3.70×6.20×2.80 米，四人间，两高架床、两落地床、四张 L 形桌、四只双门柜；阳台朝西，净玻璃 1.90 ㎡。
 - 热湿模型：空气、内墙家具蓄热、外墙屋顶三个热节点，加空气含湿量和盘管存水；一分钟积分，逐时气象驱动。
@@ -38,7 +52,7 @@
 - 空调分定频、变频两类，含最短开停机、部分负荷效率和除湿。
 - 参数、来源和哪些是假设，见 [模型与来源](模型与来源.md)。
 
-## 03　看图
+## 看图
 
 ### 一天里的室温与湿度
 
@@ -127,14 +141,14 @@
 
 </details>
 
-## 04　局限
+## 局限
 
 - 没有现场电量或温湿度校准，也没有和 EnergyPlus 等成熟工具对算；数字是带假设的模型情景，不是宿舍实测。
 - 尺寸、玻璃面积、机组性能曲线、门窗开合和返回时间都不是实测；总层数未知，二楼按非顶层处理。
 - 风扇停转的体感、相邻房间换热、天空长波未计算。
 - 完整的方法核对与局限见下方“详细数据”。
 
-## 05　自己跑一遍
+## 自己跑一遍
 
 需要 Python 3.12 与 uv，在仓库根目录运行：
 
@@ -147,7 +161,7 @@ uv run --frozen python render_figures.py --report
 
 场景重建、逐分钟轨迹和图表单独更新的方法，见下方“详细数据 · 复现与待核实资料”。
 
-## 06　详细数据
+## 详细数据
 
 <details>
 <summary><b>这间宿舍</b></summary>
@@ -426,7 +440,7 @@ uv run --frozen python render_figures.py --report
 
 </details>
 
-## 07　仓库里有什么
+## 仓库里有什么
 
 | 位置 | 内容 |
 |---|---|
