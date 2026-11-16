@@ -25,14 +25,14 @@ def write_report(root,mc,sobol,config):
     root=Path(root);full_mc=mc;mc=baseline(mc);base=mc[mc.room=='base']
     lines=['# 宿舍供电时刻、空调电量与温湿度','',
       INTRO,'',scene_intro(),'',*opening(base),'',
-      '**以下为中位数（5–95%情景范围），不是实测置信区间。** 三种房间、两种空调、七条规则配对计算，人员日历和气象共用。','',
+      '**以下为中位数（5–95%情景范围），不是实测置信区间。** 三种房间、两种空调、八条规则配对计算，人员日历和气象共用。','',
       '## 先看结果','',
-      '取消强制断电，并不等于全天开空调。更实际的对照是保留整间供电，人走自己关空调、人回再开；休息日有人时保持供电。','']
+      '主对照为按上下班时间提前开机预冷，并在休息日保留供电。工作日维持四段断电，午休返回日和下班到家前提前开机；无人短休不开。预冷提前量基准30分钟、情景10–60分钟，温度设定与在室相同。','']
     for kind in TYPES:
         cur=base[(base.kind==kind)&(base.policy=='cut_all')].sort_values('sample')
-        own=base[(base.kind==kind)&(base.policy=='manual')].sort_values('sample')
-        lines.append(f'- {TYPES[kind]}：现行规定相对一直开节电 {qi(cur.saving_pct)}%；改成自主开关，整季相对现行规定多用 {qi(own.energy_kWh.to_numpy()-cur.energy_kWh.to_numpy(),0)} kWh。')
-    lines+=['','**工作日两次10分钟供电时无人，空调不会自己开，因此没有空调制冷恢复。** 午休只有回来才开；下班也要到家后手动开。提前恢复电源不等于提前制冷，这一点会改变规则之间的取舍。','',
+        own=base[(base.kind==kind)&(base.policy=='precool_restday')].sort_values('sample')
+        lines.append(f'- {TYPES[kind]}：现行规定相对一直开节电 {qi(cur.saving_pct)}%；改成预冷+休息日供电，整季相对现行规定多用 {qi(own.energy_kWh.to_numpy()-cur.energy_kWh.to_numpy(),0)} kWh。')
+    lines+=['','**工作日两次10分钟供电时无人，空调不会自己开，因此没有空调制冷恢复。** 现行规定在午休和下班返回后手动开；预冷方案按返回日历提前定时开机。提前供电且仍手动是另一条规则，不等于预冷。','',
       '## 已确认与仍在假设的条件','',
       '- 实际四人间、住4人。家具是两张高架床、两张落地床、四张L形桌、四只双门铁柜。房间工作尺寸约3.7×6.2×2.8米，依据过道横向三块砖加两排家具、家具占满长墙及口述，仍非实测；净宽3.6–4.4、净长6.0–6.4、净高2.6–3.2米作为情景范围。床长约占3.3格，场景判读地砖更可能0.6米，把握中低，仍未实测。0.8米砖的4.3×6.2米及口述上限4.8×6.2米另列对照。',
       '- 每天含休息日均按四段断电：08:00–10:30、10:40–12:00、13:30–15:00、15:10–17:30。其间供电10、90、10分钟；17:30至次日08:00持续供电。断电时包括壁挂风扇在内的全部用电设备停转；这不等于门窗漏风或自然换气为零。',
@@ -40,18 +40,18 @@ def write_report(root,mc,sobol,config):
       '- 阳台外墙有两扇磨砂窗及半玻璃半铝合金门。两窗净玻璃各0.495×1.085米，门上半净玻璃0.830×0.9975米，净玻璃合计1.902075㎡；1.6–2.4㎡作为照片推算与遮框误差的情景范围，非测量置信区间。门下半古铜棕横向压纹不透明铝合金板按0.945㎡、框按0.4638375㎡单列，均不透射太阳辐射；框不再叠加算成玻璃。深色铝合金板及混合门窗框的传热、太阳吸收是未测假设，范围见方法和参数表。已确认二楼、非转角、阳台朝西，方位270°±30°；两侧长墙邻室，另一端走廊，总层数未知，二楼按非顶层处理。下午两段断电与西晒重合，中间15:00只有10分钟供电。',
       '- 四套家具有效热容暂取0.5 MJ/K、范围0.2–1.0 MJ/K，质量未测，未采用未经测量的精确质量。内墙地顶有效热容按面积密度缩放：约130 kJ/(㎡·K)，情景52–313 kJ/(㎡·K)；物性按面积密度给定；家具热容不再乘四，也不随房间面积重复放大。',
       '- 基准空调制冷量3500 W，情景2600–5000 W，机型与性能均未核；所有房间对照使用相同机组参数。气象为深圳SWERA与广州CSWD典型年，各64个参数样本（默认共128），不是实际厂区天气。广州原始RH有38小时为101%，保留原文件，换算时按100%并保存清单。','',
-      *building_table(full_mc),'## 电量：一直开、现行规定、自主开关','',
+      *precool_table(base),*building_table(full_mc),'## 电量：一直开、现行规定、预冷+休息日供电','',
       '制冷季假设五月至十月连续184天，起始星期一；不从典型年拼接年份推断真实星期。单日电量是季内工作日平均，整季含休息日；只计空调，不含风扇等其他电器电量。下表使用二楼按非顶层、单面外墙、西向±30°的128个配对样本（两站各64组），对应主房间的尺寸包络（21.60–28.16㎡），不是只固定22.94㎡的结果；时间曲线和确定算例另用22.94㎡基准。均匀抽样是试算选择，不把“地砖更可能0.6米”强行量化为概率。','',
       '|空调|一直开：工作日日均 kWh|现行规定：工作日日均 kWh|一直开：整季 kWh|现行规定：整季 kWh|节电比例 %|',
       '|---|---|---|---|---|---|']
     for kind in TYPES:
         a=base[(base.kind==kind)&(base.policy=='always')];b=base[(base.kind==kind)&(base.policy=='cut_all')]
         lines.append(f'|{TYPES[kind]}|{qi(a.workday_kWh)}|{qi(b.workday_kWh)}|{qi(a.energy_kWh,0)}|{qi(b.energy_kWh,0)}|{qi(b.saving_pct)}|')
-    lines+=['','|空调|现行规定整季 kWh|自主开关整季 kWh|自主开关比现行规定多用 kWh|来电自启假设整季 kWh|',
+    lines+=['','|空调|现行规定整季 kWh|预冷+休息日供电整季 kWh|预冷+休息日供电比现行规定多用 kWh|来电自启假设整季 kWh|',
             '|---|---|---|---|---|']
     for kind in TYPES:
         a=base[(base.kind==kind)&(base.policy=='cut_all')].sort_values('sample')
-        b=base[(base.kind==kind)&(base.policy=='manual')].sort_values('sample')
+        b=base[(base.kind==kind)&(base.policy=='precool_restday')].sort_values('sample')
         c=base[(base.kind==kind)&(base.policy=='auto_restore')]
         lines.append(f'|{TYPES[kind]}|{qi(a.energy_kWh,0)}|{qi(b.energy_kWh,0)}|{qi(b.energy_kWh.to_numpy()-a.energy_kWh.to_numpy(),0)}|{qi(c.energy_kWh,0)}|')
     lines+=['','差值按同一情景配对计算，中位数分别统计，不一定等于两列中位数相减。来电自启只是功能相反的假想对照，不是本人机组的真实行为；其人员日历不变。','',
@@ -98,7 +98,7 @@ def write_report(root,mc,sobol,config):
     lines+=['','最高温是季内休息日的最高值，不是日均。断电时壁挂风扇和其他通风设备也停止，因此实际体验还少了吹风；模型没有计算风速体感，不能据此精确评估床位舒适。漏风和自然换气仍保留假设，不写成零通风。','',
       '![休息日](figures/03_restday.png)','',
       '## 替代规则的取舍','',
-      '“提前供电·仍需手动”合并到“仅工作日断电”展示：工作日11:00、16:30提前来电时仍无人，不会预冷；两条规则都在休息日持续供电。两者的制冷可用时段相同，微小电量差来自额外通电期间的待机与其他电器热源；完整原始七规则仍保留在数据表。无人时30°C属于设备支持温控管理的条件对照，尚未核实本机有此功能。','',
+      '图中将“提前供电·仍需手动”合并到“仅工作日断电”展示，详细表仍列出全部八条规则：工作日11:00、16:30提前来电时仍无人，不会预冷；两条规则都在休息日持续供电。两者的制冷可用时段相同，微小电量差来自额外通电期间的待机与其他电器热源；完整原始八规则仍保留在数据表。无人时30°C属于设备支持温控管理的条件对照，尚未核实本机有此功能。','',
       '|空调|规则|整季电量 kWh|相对一直开节电 %|新增有人热暴露 °C·h|有人RH>65%小时数|',
       '|---|---|---|---|---|---|']
     for kind in TYPES:
@@ -126,11 +126,14 @@ def write_report(root,mc,sobol,config):
         a=base[(base.kind==kind)&(base.policy=='always')];b=base[(base.kind==kind)&(base.policy=='cut_all')]
         lines.append(f'|{TYPES[kind]}|{qi(a.cycles_per_day)}|{qi(b.cycles_per_day)}|{qi(a.delivered_cop,2)}|{qi(b.delivered_cop,2)}|')
     lines+=['',*timer_table(root),'## 哪些条件更影响结果','',
-      f'仅针对深圳站一个炎热周、主房间及固定时刻，以{config["sobol_n"]}对基础样本和{config["n_parameters"]}个输入做全局敏感性分析；不代表整季名次。该扫描固定非顶层、单面外墙，方位限制为西向±30°，不再把顶层/转角当未知开关。指数大小仍依赖26个未定输入的所选范围。输入含返回和手动反应延迟，已知人数不再抽样。总效应包含交互，不加总成百分比，区间是配对重采样95%范围。','']
+      f'仅针对深圳站一个炎热周、主房间及规定时段，以{config["sobol_n"]}对基础样本和{config["n_parameters"]}个输入做全局敏感性分析；不代表整季名次。该扫描固定非顶层、单面外墙，方位限制为西向±30°，不再把顶层/转角当未知开关。指数大小仍依赖27个未定输入的所选范围。输出为预冷方案减现行的用电增量、现行减预冷的在室热暴露。输入含预冷提前量、返回和手动反应延迟，已知人数不再抽样。总效应包含交互，不加总成百分比，区间是配对重采样95%范围。','']
     for kind in TYPES:
-        for output,title in [('saving_kWh','节电量'),('extra_degree_hours','热暴露')]:
+        for output,title in [('saving_kWh','预冷用电增量'),('extra_degree_hours','减少的热暴露')]:
             s=sobol[(sobol.kind==kind)&(sobol.output==output)].nlargest(3,'ST')
             lines.append(f'- {TYPES[kind]}{title}：'+'、'.join(f'{r.label} {r.ST:.2f}（{r.ST_low:.2f}–{r.ST_high:.2f}）' for r in s.itertuples())+'。')
+    for kind in TYPES:
+        lead=sobol[(sobol.kind==kind)&(sobol.parameter=='precool_minutes')]
+        lines.append(f'- {TYPES[kind]}预冷提前量10–60分钟：'+'；'.join(f'{dict(saving_kWh="用电增量",extra_degree_hours="减少热暴露")[r.output]} 总效应 {r.ST:.3f}（{r.ST_low:.3f}–{r.ST_high:.3f}）' for r in lead.itertuples())+'。')
     lines+=['','区间重叠时不强调精确排名。主相图固定四人、相同门窗与机组，按固定断电与手动行为扫描面积及墙体传热；不以单段时长替代规定。','',
       '![敏感性](figures/05_sensitivity.png)','', '![相图](figures/00_phase.png)','',
       '## 方法、核对与局限','',
@@ -147,7 +150,7 @@ def write_report(root,mc,sobol,config):
       '```sh','uv run --frozen python -m pytest -q','uv run --frozen python run_confirmed.py','uv run --frozen python verify_confirmed.py','uv run --frozen python render_figures.py --report','```','',
       '场景重建需要Blender 4.2 LTS，已用4.2.23验证。运行 `blender --background --factory-startup --python scene/source/build_model.py` 可生成场景；五个视角的渲染和JPG压缩命令见 [场景说明](scene/README.md)。场景图不参与热计算。','',
       '只更新图表、不运行仿真时，可运行 `uv run --frozen python render_figures.py --report`。图表需系统苹方SC、Noto Sans SC或思源黑体之一；图件使用苹方SC，导出的SVG已转曲，阅读图件不依赖字体安装。','',
-      f'默认{config["mc_n"]}个共用参数样本。西向主基准三种房间×两类机组×七条规则，共{config["mc_n"]*42}条整季轨迹；朝东/顶层/转角各在主房间计算一直开、现行和自己开关，共{config["mc_n"]*18}条对照，总计{config["mc_n"]*60}条。Sobol基础样本{config["sobol_n"]}对、26个输入。随机种子固定，执行测试、数据、八张核心图及四张补充图和本文生成；每张有亮暗、宽窄四版PNG与SVG。','',
+      f'默认{config["mc_n"]}个共用参数样本。西向主基准三种房间×两类机组×八条规则，共{config["mc_n"]*48}条整季轨迹；朝东/顶层/转角各在主房间计算一直开、现行、自主开关和预冷方案，共{config["mc_n"]*24}条对照，总计{config["mc_n"]*72}条。Sobol基础样本{config["sobol_n"]}对、27个输入。随机种子固定，执行测试、数据、八张核心图及四张补充图和本文生成；每张有亮暗、宽窄四版PNG与SVG。','',
       '二楼、非转角、阳台朝西已经确认；总层数未知，非顶层仍是明确假设。方位精度、净尺寸与层高、玻璃面积、门窗开合、机组曲线和返回延迟仍非实测，是结果的未解决局限；将来有实测温湿度和分项电量后才能进一步校准。','']
     text='\n'.join(lines)
     import re
@@ -175,7 +178,7 @@ def visual_story(root):
     blocks=['## 先看图\n',
       '以下电量与季节峰温图用128组西向±30°样本；二楼按非顶层，单面外墙。日内曲线固定西向270°；敏感性也固定非顶层、单面外墙，只分析西向范围和其余未定输入。受热是有人时超过28度的幅度乘时长，不是健康等级。\n',pic('00_主结论'),
       '## 一天里的室温与湿度\n',
-      '工作日短休无人，来电不会自动制冷；午休返回才开机。工作日与休息日上下对齐、共用坐标。这里是定频基准示例；居中的30分钟滑动平均会模糊启停边界，不用它读精确开机时刻或峰值。原始统计仍用一分钟数据。\n',pic('02_一天室温'),pic('03_一天湿度'),
+      '工作日短休无人，两方案均不开机；蓝线按午休及下班返回时间提前30分钟预冷。工作日与休息日上下对齐、共用坐标。这里是定频基准示例；居中的30分钟滑动平均会模糊启停边界，不用它读精确开机时刻或峰值。原始统计仍用一分钟数据。\n',pic('02_一天室温'),pic('03_一天湿度'),
       '## 休息日在屋里要承受什么\n',pic('04_休息日'),
       '## 规则之间怎样取舍\n',pic('05_规则取舍'),
       '## 哪些假设最影响结论\n',pic('06_影响因素'),
@@ -186,26 +189,27 @@ def visual_story(root):
 
 
 def opening(base):
-    work=paired_values(base,'fixed','manual','workday_kWh')
-    rest=paired_values(base,'fixed','manual','restday_kWh')
-    extra=paired_values(base,'fixed','manual','energy_kWh')
-    return [f'**工作日里，强制断电和“人走自己关”耗电几乎一样；多用的电主要集中在休息日白天有人时。** 按已确认的西向、单面外墙和二楼非顶层假设估算，定频空调每个休息日多用约{rest.median():.1f}度，整季多约{extra.median():.0f}度。换来的是休息日有人时能持续开空调，不必等来电。','',
-     f'工作日差值中位数为{work.median():.2f}度/天，取整约0度；存在跨日蓄热和少量待机差异，因此不是数学上全部恰好为零。工作日与休息日的范围、顶层及转角对照见后面的表。','',
+    work=paired_values(base,'fixed','precool_restday','workday_kWh')
+    rest=paired_values(base,'fixed','precool_restday','restday_kWh')
+    extra=paired_values(base,'fixed','precool_restday','energy_kWh')
+    return [f'**按上下班时间提前预冷，并在休息日保持供电。** 定频空调整季比现行规定多用约{extra.median():.0f}度；工作日日均多约{work.median():.2f}度，休息日日均多约{rest.median():.2f}度。预冷提前量基准30分钟、情景10–60分钟。','',
+     '比较使用共用人员日历、天气和房间参数。预冷只在午休返回日及下班到家前启动，两次短休无人不开机；休息日不按工作日时刻断电。','',
      '没有现场电量或温湿度校准，也没有与成熟建筑仿真工具对算。数字是带假设的模型情景，不是宿舍实测；风扇停转的体感未算。']
+
 
 
 def building_table(mc):
     rows=['## 朝向、顶层和转角分开看','',
       '二楼、非转角、阳台朝西已确认；总层数未知，非顶层仍为假设。方位为270°±30°。四种工况共用完全相同的128组其他输入、气象和人员日历，朝东只把方位旋转180°，顶层只增加暴露屋面，转角只增加侧外墙及其派生蓄热。三种对照均不是本宿舍已确认状态。','',
-      '|建筑工况|空调|样本数|现行相对一直开节电 %|自己开关整季多用 度|工作日日均多用 度|休息日日均多用 度|现行休息日季内最高温 °C|',
+      '|建筑工况|空调|样本数|现行相对一直开节电 %|预冷方案整季多用 度|工作日日均多用 度|休息日日均多用 度|现行休息日季内最高温 °C|',
       '|---|---|---|---|---|---|---|---|']
     for case,label in CASES:
       part=mc[(mc.room=='base')&(mc.building_case==case)]
       for kind in TYPES:
         cur=part[(part.kind==kind)&(part.policy=='cut_all')]
-        rows.append('|'+ '|'.join([label,TYPES[kind],str(len(cur)),qi(cur.saving_pct),qi(paired_values(part,kind,'manual','energy_kWh'),0),qi(paired_values(part,kind,'manual','workday_kWh'),2),qi(paired_values(part,kind,'manual','restday_kWh'),2),qi(cur.rest_peak_C)])+'|')
+        rows.append('|'+ '|'.join([label,TYPES[kind],str(len(cur)),qi(cur.saving_pct),qi(paired_values(part,kind,'precool_restday','energy_kWh'),0),qi(paired_values(part,kind,'precool_restday','workday_kWh'),2),qi(paired_values(part,kind,'precool_restday','restday_kWh'),2),qi(cur.rest_peak_C)])+'|')
     rows+=['','下面直接比较同一样本的建筑工况差值；正数表示对照工况比西向基准更高，范围不是两列分位数相减。','',
-      '|相对西向基准|空调|现行整季电量变化 度|自己开关额外用电变化 度|现行休息日峰温变化 °C|',
+      '|相对西向基准|空调|现行整季电量变化 度|预冷方案额外用电变化 度|现行休息日峰温变化 °C|',
       '|---|---|---|---|---|']
     west=mc[(mc.room=='base')&(mc.building_case=='west')]
     for case,label in CASES[1:]:
@@ -213,7 +217,7 @@ def building_table(mc):
       for kind in TYPES:
         a=west[(west.kind==kind)&(west.policy=='cut_all')].set_index('sample')
         b=part[(part.kind==kind)&(part.policy=='cut_all')].set_index('sample')
-        extra=paired_values(part,kind,'manual','energy_kWh')-paired_values(west,kind,'manual','energy_kWh')
+        extra=paired_values(part,kind,'precool_restday','energy_kWh')-paired_values(west,kind,'precool_restday','energy_kWh')
         rows.append(f'|{label}|{TYPES[kind]}|{qi(b.energy_kWh-a.energy_kWh,0)}|{qi(extra,0)}|{qi(b.rest_peak_C-a.rest_peak_C)}|')
     return rows+['','未另注明的季节图表都使用西向基准128组。完整数据见 `results/building_confirmed.csv.gz`；本报告只使用定稿房间的当前计算结果。','']
 
@@ -223,7 +227,7 @@ def timer_table(root):
     scan=pd.read_csv(Path(root)/'results/west_cycle_timer_scan.csv')
     rows=['## 启停次数为什么不能当实机预测','',
      '最短开机时间180–600秒、最短停机时间120–300秒分别做3档，两站共54条定频整季轨迹；其余参数固定为22.94㎡、非顶层、单面外墙、朝西270°的默认值。它是额外确定参数扫描，没有并入主情景区间。下表停机时间固定180秒；完整9组合见 `results/west_cycle_timer_scan.csv`。','',
-     '|气象|最短开机 分钟|一直开每天启动|现行每天启动|一直开开机段10–90% 分钟|现行相对一直开节电 %|自己开关多用 度/季|',
+     '|气象|最短开机 分钟|一直开每天启动|现行每天启动|一直开开机段10–90% 分钟|现行相对一直开节电 %|自主开关多用 度/季|',
      '|---|---|---|---|---|---|---|']
     for station in ['shenzhen','guangzhou']:
       for on in [180,300,600]:
@@ -243,3 +247,21 @@ def scene_gallery():
       '![阳台回望](scene/images/balcony.jpg)\n\n![俯视全景](scene/images/overview.jpg)\n\n'
       '![左墙侧视](scene/images/left.jpg)\n\n![右墙侧视](scene/images/right.jpg)\n\n'
       '<small>示意图，按记忆与照片重建，尺寸为推算；不参与计算。</small>\n')
+
+
+def precool_table(base):
+    lines=['## 预冷与休息日供电：配对比较','',
+      '工作日保留四段断电，但允许在午休返回前和下班到家前提前开机；午休不返回日不预冷，08:00和13:30关机。提前量基准30分钟、独立均匀情景10–60分钟。休息日沿用原在室日历、全天供电。原七规则保留为详细对照；定时开机功能是否可用尚未核实。','',
+      '|指标|定频|变频|','|---|---|---|']
+    for metric,label in [('energy_kWh','整季空调电量 kWh'),('workday_kWh','工作日日均 kWh'),('restday_kWh','休息日日均 kWh'),('occupied_degree_hours','在室热暴露 °C·h'),('return_C','工作日到家时室温 °C'),('temperature_recovery_median_min','到家后温度达标时间 min'),('recovery_median_min','到家后温湿同时达标时间 min'),('rest_peak_C','休息日在室最高室温 °C')]:
+        for policy,name in [('cut_all','现行规定'),('precool_restday','预冷+休息日供电')]:
+            vals=[qi(base[(base.kind==kind)&(base.policy==policy)][metric]) for kind in TYPES]
+            lines.append('|'+label+' · '+name+'|'+'|'.join(vals)+'|')
+        if metric in ['energy_kWh','workday_kWh','restday_kWh','occupied_degree_hours','return_C']:
+            vals=[qi(paired_values(base,kind,'precool_restday',metric),2 if 'day' in metric else 1) for kind in TYPES]
+            lines.append('|'+label+' · 预冷减现行|'+'|'.join(vals)+'|')
+    for policy,name in [('cut_all','现行规定'),('precool_restday','预冷+休息日供电')]:
+        lines.append('|休息日在室最高室温 °F · '+name+'|'+'|'.join(qi(base[(base.kind==kind)&(base.policy==policy)].rest_peak_C*1.8+32) for kind in TYPES)+'|')
+    lines+=['|预冷方案比自主开关多用 kWh|'+'|'.join(qi(paired_values(base,kind,'precool_restday','energy_kWh',reference='manual')) for kind in TYPES)+'|','',
+       '到家时室温先对每个情景季内工作日取平均。温度达标要求≤28°C连续30分钟；联合达标另要求RH≤65%。先取每个情景季内工作日恢复时间中位数，再给跨情景5–95%范围；未恢复日按六小时观察窗截尾，不能解释为保证达标时间。每条规则的在室日历相同。预冷方案仍保留其他工作日断电，而自主开关对照全天供电；两者还存在待机及背景电器散热差异，因此预冷相对自主开关的配对电量差在少量变频情景可为负，并非每个样本都增加。这里只计空调电量，背景电器散热作为室内热源处理。','']
+    return lines

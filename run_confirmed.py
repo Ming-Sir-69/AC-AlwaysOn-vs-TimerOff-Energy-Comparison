@@ -18,44 +18,53 @@ def input_signature(n,sobol_n):
         fingerprints={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files})
 
 
+def seasonal_sample(args):
+    k,u,frames,metas=args
+    sample_rows=[]
+    station='shenzhen' if k%2==0 else 'guangzhou'
+    frame=frames[station];season=frame[frame.month.between(5,10)]
+    extended=frame.loc[season.index[0]:season.index[-1]+6];steps=len(season)*60
+    for case,label in CASES:
+        for room in (ROOM_AREAS if case=='west' else ['base']):
+            p=case_parameters(u,case,room);w=forcing_for_parameters(extended,metas[station],p)
+            for kind in ['fixed','inverter']:
+                reference=None
+                for policy in (POLICIES if case=='west' else ['always','cut_all','manual','precool_restday']):
+                    full=simulate(w,p,kind,policy);a=full[:steps]
+                    m=metrics(a,p,recovery_data=full)
+                    m.update(summarize_windows(a))
+                    if policy=='always':reference=m.copy()
+                    m.update(sample=k,station=station,building_case=case,case_label=label,room=room,kind=kind,policy=policy)
+                    m.update({'p_'+key:getattr(p,key) for key in BOUNDS})
+                    m.update(saving_kWh=reference['energy_kWh']-m['energy_kWh'],
+                        saving_pct=100*(1-m['energy_kWh']/reference['energy_kWh']),
+                        terminal_extra_sensible_kWh=m['terminal_sensible_kWh']-reference['terminal_sensible_kWh'],
+                        terminal_extra_latent_kWh=m['terminal_latent_kWh']-reference['terminal_latent_kWh'])
+                    sample_rows.append(m)
+    return sample_rows
+
+
 def seasons(frames,metas,n,signature):
     checkpoint=ROOT/'.cache/west_checkpoint.csv';stamp=ROOT/'.cache/west_checkpoint_config.json'
     rows=[];done=0
     if checkpoint.exists() and stamp.exists() and json.loads(stamp.read_text())==signature:
         old=pd.read_csv(checkpoint)
         counts=old.groupby('sample').size()
-        assert counts.eq(60).all()
+        assert counts.eq(72).all()
         done=len(counts);assert set(counts.index)==set(range(done))
         rows=old.to_dict('records');print(f'Resume same-input completed samples: {done}/{n}',flush=True)
     else:stamp.write_text(json.dumps(signature,indent=2))
     unit=scenario_units(n)
-    for k,u in enumerate(unit):
-        if k<done:continue
-        station='shenzhen' if k%2==0 else 'guangzhou'
-        frame=frames[station];season=frame[frame.month.between(5,10)]
-        extended=frame.loc[season.index[0]:season.index[-1]+6];steps=len(season)*60
-        for case,label in CASES:
-            for room in (ROOM_AREAS if case=='west' else ['base']):
-                p=case_parameters(u,case,room);w=forcing_for_parameters(extended,metas[station],p)
-                for kind in ['fixed','inverter']:
-                    reference=None
-                    for policy in (POLICIES if case=='west' else ['always','cut_all','manual']):
-                        full=simulate(w,p,kind,policy);a=full[:steps]
-                        m=metrics(a,p,recovery_data=full)
-                        m.update(summarize_windows(a))
-                        if policy=='always':reference=m.copy()
-                        m.update(sample=k,station=station,building_case=case,case_label=label,room=room,kind=kind,policy=policy)
-                        m.update({'p_'+key:getattr(p,key) for key in BOUNDS})
-                        m.update(saving_kWh=reference['energy_kWh']-m['energy_kWh'],
-                            saving_pct=100*(1-m['energy_kWh']/reference['energy_kWh']),
-                            terminal_extra_sensible_kWh=m['terminal_sensible_kWh']-reference['terminal_sensible_kWh'],
-                            terminal_extra_latent_kWh=m['terminal_latent_kWh']-reference['terminal_latent_kWh'])
-                        rows.append(m)
+    from concurrent.futures import ProcessPoolExecutor
+    tasks=((k,unit[k],frames,metas) for k in range(done,n))
+    with ProcessPoolExecutor(max_workers=4) as pool:
+      for k,batch in enumerate(pool.map(seasonal_sample,tasks),start=done):
+        rows.extend(batch)
         if (k+1)%4==0 or k+1==n:
             pd.DataFrame(rows).to_csv(checkpoint,index=False)
             print(f'West + matched controls: {k+1}/{n} samples, {len(rows)} seasonal trajectories',flush=True)
     result=pd.DataFrame(rows)
-    assert len(result)==60*n
+    assert len(result)==72*n
     result.to_csv(ROOT/'results/building_confirmed.csv.gz',index=False,compression={'method':'gzip','mtime':0})
     return result
 
@@ -99,11 +108,11 @@ def main():
     cfg=dict(mc_n=args.mc,sobol_n=args.sobol,seed=SEED,hot_week_doy_start=end-6,
              hot_week_doy_end=end,dt_seconds=60,season_days=184,weather=metas,reused_rows=0)
     cfg.update(signature,baseline=asdict(room_parameters(azimuth=270.)),n_parameters=len(WEST_BOUNDS),
-        mc_trajectories=60*args.mc,west_trajectories=42*args.mc,control_trajectories=18*args.mc,
+        mc_trajectories=72*args.mc,west_trajectories=48*args.mc,control_trajectories=24*args.mc,
         building_facts={'floor':2,'total_floors':None,'topfloor':False,'topfloor_status':'assumed non-topfloor because total floors unknown','corner':False,'exterior_wall':'balcony facade only','azimuth_baseline':270.,'azimuth_range':[240.,300.],'azimuth_status':'west confirmed by resident: direct sunset glare and shadow motion','east_control_range':[60.,120.]},
         geometry={'width':3.7,'length':6.2,'height':2.8,'glass_area':1.902075,'glass_range':[1.6,2.4],'metal_area':.945,'frame_area':.4638375},
         geometry_source_sha256={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in ['scene/参数.json','data/openings_geometry.json']},
-        west_bounds=WEST_BOUNDS,control_policies=['always','cut_all','manual'])
+        west_bounds=WEST_BOUNDS,control_policies=['always','cut_all','manual','precool_restday'])
     mc=seasons(frames,metas,args.mc,signature)
     frame=frames['shenzhen'];week=frame[frame.doy.between(cfg['hot_week_doy_start'],cfg['hot_week_doy_end'])]
     supplemental(frame,metas['shenzhen'],week);print('West daily traces, fixed-size seasons and phase complete',flush=True)

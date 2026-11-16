@@ -170,3 +170,46 @@ def test_unstable_coarse_step_is_rejected_instead_of_saving_nans():
     with pytest.raises(ValueError,match='unstable'):
         simulate(constant(),dt=300)
     assert np.isfinite(simulate(constant(),dt=120)).all()
+
+
+def test_precool_schedule_and_manual_override():
+    from acstudy.model import schedule,manual_ready,POLICIES
+    from dataclasses import replace
+    policy=POLICIES.index('precool_restday')
+    p=replace(Parameters(),lunch_fraction=1.).vector()
+    def ready(h,day=0):
+        return schedule(h,day,policy,p)[0] and manual_ready(h,day,policy,p)
+    assert not ready(11.5)
+    assert ready(11.+35/60)  # 12:05 arrival minus 30 min
+    assert ready(13.+29/60)
+    assert not ready(13.5)
+    assert not ready(17.+29/60)
+    assert ready(17.5)
+    assert ready(18.)
+    assert not ready(8.)
+    assert not ready(10.5) and not ready(10.+39/60)
+    assert not ready(15.) and not ready(15.+9/60)
+    assert all(schedule(h,5,policy,p)[0] for h in [8.,10.,13.5,16.,23.])
+    p=replace(Parameters(),lunch_fraction=0.,evening_return_minutes=0.,precool_minutes=60.).vector()
+    assert not ready(11.8)
+    assert not ready(16.+29/60)
+    assert ready(16.5)
+    assert schedule(16.5,0,policy,p)[1]==0.  # precooling while absent
+
+
+def test_recovery_rolling_search_matches_minute_search():
+    from acstudy.analysis import recovery_times
+    rng=np.random.default_rng(734)
+    for delay in [0.,17.,60.]:
+        p=Parameters(evening_return_minutes=delay)
+        a=np.zeros((1440,25));a[:,1]=29.;a[:,5]=70.
+        begin=int((17.5+delay/60)*60)
+        for run in [0,1,29,30,45,360]:
+            good=rng.random(1440)<.4
+            good[begin+5:min(1440,begin+5+run)]=True
+            a[:,1]=np.where(good,27.,29.);a[:,5]=np.where(good,60.,70.)
+            end=min(1440,begin+360)
+            expected=next((j for j in range(max(0,end-begin-30+1)) if good[begin+j:begin+j+30].all()),None)
+            values,events=recovery_times(a,p)
+            assert bool(events[0])==(expected is not None)
+            assert values[0]==(end-begin if expected is None else expected)

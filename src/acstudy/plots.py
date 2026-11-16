@@ -9,12 +9,12 @@ from matplotlib import font_manager,colors,ticker,patheffects
 from .model import LUNCH_CALENDAR,Parameters
 from .presentation import baseline,PUBLIC_POLICIES
 
-NAMES={'always':'一直开','cut_all':'现行规定·手动开机','cut_workday':'仅工作日断电',
+NAMES={'manual':'自主开关·全程供电','always':'一直开','cut_all':'现行规定·手动开机','cut_workday':'仅工作日断电',
        'early60':'提前供电·仍需手动','setback30':'无人时调至30°C',
-       'manual':'自主开关·全程供电','auto_restore':'来电自启·假设对照'}
+       'precool_restday':'预冷+休息日供电','auto_restore':'来电自启·假设对照'}
 TYPES={'fixed':'定频','inverter':'变频'}
-SHORT={'always':'一直开','cut_all':'现行规定','cut_workday':'工作日断电','early60':'提前供电',
-       'setback30':'无人时30度','manual':'自己开关','auto_restore':'来电自启（假设）'}
+SHORT={'manual':'自己开关','always':'一直开','cut_all':'现行规定','cut_workday':'工作日断电','early60':'提前供电',
+       'setback30':'无人时30度','precool_restday':'预冷方案','auto_restore':'来电自启（假设）'}
 ROOMS={'base':'22.94㎡基准','tile80':'26.66㎡·0.8米砖','upper':'29.76㎡口述上限'}
 THEMES={
  '亮':dict(bg='#F4EFE4',ink='#2E2A26',muted='#6B655C',grid='#E2DBCD',amber='#B07A00',blue='#1B74B5',gray='#8A8478',shade='#2E2A26'),
@@ -107,13 +107,13 @@ class Card:
         if y:ax.set_ylabel(y,fontproperties=self.prop(self.body),color=self.t['muted'],labelpad=18)
     def interval(self,ax,values,y,policy,vertical=False):
         lo,p25,mid,p75,hi=q(values);color=self.color(policy)
-        alpha=1. if policy in ['cut_all','manual'] else .65
+        alpha=1. if policy in ['cut_all','precool_restday'] else .65
         ax.plot([lo,hi],[y,y],color=color,lw=1.44,alpha=alpha,zorder=2,solid_capstyle='round')
         ax.plot([p25,p75],[y,y],color=color,lw=3.0,alpha=alpha,zorder=3,solid_capstyle='round')
-        ax.plot(mid,y,marker='D' if policy=='manual' else 'o',ms=11.5 if policy in ['cut_all','manual'] else 10,
+        ax.plot(mid,y,marker='D' if policy=='precool_restday' else 'o',ms=11.5 if policy in ['cut_all','precool_restday'] else 10,
                 mfc=color,mec=self.t['bg'],mew=1.3,ls='none',zorder=5)
         return lo,mid,hi
-    def color(self,p):return self.t['amber'] if p=='cut_all' else self.t['blue'] if p=='manual' else self.t['gray']
+    def color(self,p):return self.t['amber'] if p=='cut_all' else self.t['blue'] if p=='precool_restday' else self.t['gray']
     def footer(self):
         note=self.note
         lines=wrap(note,25 if self.narrow else 77)
@@ -167,7 +167,7 @@ def dots_card(card,rows,xlabel,extra=None,hero_summary=False):
     for i,(policy,label,values,secondary) in enumerate(rows):
         l,m,h=card.interval(ax,values,i,policy)
         y=rect[1]+rect[3]*(1-(i+.55)/(n+.05))
-        card.text(.065,y,label,card.body,bold=policy in ['cut_all','manual'],va='center',color='ink' if policy in ['cut_all','manual'] else 'muted')
+        card.text(.065,y,label,card.body,bold=policy in ['cut_all','precool_restday'],va='center',color='ink' if policy in ['cut_all','precool_restday'] else 'muted')
         if card.narrow:
             card.text(.85,y,f'{m:,.0f}',26,mono=True,va='center',ha='left')
             if secondary:card.text(.065,y-.037,secondary,26,color='muted',va='center')
@@ -178,9 +178,9 @@ def dots_card(card,rows,xlabel,extra=None,hero_summary=False):
 
 
 def hero(mc,theme,narrow,kind='fixed'):
-    extra=paired(mc,kind,'manual','energy_kWh');amount=q(extra)[2]
-    title=f'自己开关空调，比强制断电一季多用约{amount:.0f}度'
-    note='二楼按非顶层，单面外墙、西向±30°；128个配对情景。细线5–95%，粗线25–75%；是情景范围，不是置信区间。受热按超过28度的幅度×时长。'
+    extra=paired(mc,kind,'precool_restday','energy_kWh');amount=q(extra)[2]
+    title=f'提前预冷、休息日供电，一季多用约{amount:.0f}度'
+    note='预冷10–60分钟、休息日供电。非顶层、单面外墙、西向±30°；128个配对情景。细线5–95%，粗线25–75%；是情景范围，不是置信区间。受热按超过28度的幅度×时长。'
     if narrow:note='非顶层·单面外墙·西向±30°。细线5–95%，粗线25–75%，不是置信区间；受热按℃·小时计。'
     card=Card(title.replace('，','，\n',1) if narrow else title,theme,narrow,'00 / 电量与受热' if kind=='fixed' else '附03 / 变频电量与受热',note,kind)
     if narrow:
@@ -192,8 +192,8 @@ def hero(mc,theme,narrow,kind='fixed'):
     else:
         card.text(.78,.941,f'+{amount:.0f}',76,color='blue',bold=True,mono=True)
         card.text(.78,.845,'每季空调电量增量 / 度',18,color='muted')
-    policies=['cut_all','manual','cut_workday','setback30','always','auto_restore']
-    if narrow:policies=['cut_all','manual','cut_workday','always']
+    policies=['cut_all','precool_restday','cut_workday','setback30','always','auto_restore','manual']
+    if narrow:policies=['cut_all','precool_restday','manual','always']
     policies=sorted(policies,key=lambda p:q(paired(mc,kind,p,'energy_kWh'))[2])
     rows=[]
     for p in policies:
@@ -205,13 +205,13 @@ def hero(mc,theme,narrow,kind='fixed'):
 
 
 def energy(mc,theme,narrow):
-    own=med(mc,'fixed','manual','energy_kWh')
-    title=f'自己开关空调一季约{own:.0f}度，低于一直开'
-    note='定频，非顶层、单面外墙、西向±30°，184天。点为中位数，细线5–95%、粗线25–75%情景范围，不是置信区间。只计空调。'
+    own=med(mc,'fixed','precool_restday','energy_kWh')
+    title=f'预冷方案一季约{own:.0f}度，低于一直开'
+    note='预冷方案含休息日供电；定频，非顶层、单面外墙、西向±30°，184天。点为中位数，细线5–95%、粗线25–75%情景范围，不是置信区间。只计空调。'
     if narrow:note='非顶层·西向±30°·184天·仅空调。点为中位数，细线5–95%、粗线25–75%情景范围，非置信区间。'
     card=Card(title,theme,narrow,'01 / 整季电量',note)
     rows=[]
-    for p in sorted(['always','cut_all','manual'],key=lambda p:med(mc,'fixed',p,'energy_kWh')):
+    for p in sorted(['always','cut_all','precool_restday'],key=lambda p:med(mc,'fixed',p,'energy_kWh')):
         rows.append((p,SHORT[p],mc[(mc.kind=='fixed')&(mc.policy==p)].energy_kWh,None))
     dots_card(card,rows,'整个制冷季的空调电量 / 度')
     return card
@@ -242,11 +242,11 @@ def daily(traces,theme,narrow,field=1,kind='fixed'):
     else:
         a=traces[('base',kind,'cut_all')];start=1000*a[int((day*24+12)*60)-1,4];end=1000*a[int((day*24+13.5)*60)-1,4]
         title=f'午休示例里，含湿量约从{start:.0f}降到{end:.0f}克/千克'
-    note='22.94㎡、四人、西向270°的炎热周示例；曲线为30分钟滑动平均，计算使用一分钟数据。灰带为断电，图不代表所有情景峰值。'
-    if field==5:note='22.94㎡·西向270°示例；曲线为30分钟滑动平均。降温后RH读数上升，不等于空气里水变多；含湿量另见附图。'
-    if narrow:note=('22.94㎡·西向270°·30分钟滑动平均。降温后RH上升不等于水变多。' if field==5 else '22.94㎡·西向270°；灰带表示断电。\n曲线为30分钟滑动平均，并非情景峰值。')
+    note='22.94㎡、四人、西向270°的炎热周示例；曲线为30分钟滑动平均，计算使用一分钟数据。灰带为现行断电时段；预冷方案可提前供电。'
+    if field==5:note='22.94㎡·西向270°示例；灰带为现行断电时段，曲线为30分钟滑动平均。降温后RH上升不等于水变多；含湿量另见附图。'
+    if narrow:note=('22.94㎡·西向270°·30分钟滑动平均。灰带为现行断电时段；降温后RH上升不等于水变多。' if field==5 else '22.94㎡·西向270°；灰带表示现行断电时段。\n曲线为30分钟滑动平均，并非情景峰值。')
     card=Card(title,theme,narrow,'02 / 一天的室温' if field==1 else '03 / 一天的湿度' if field==5 else '附02 / 空气中的水蒸气',note,kind)
-    selected=['always','cut_all','manual'] if not narrow else ['cut_all','manual']
+    selected=['always','cut_all','precool_restday'] if not narrow else ['cut_all','precool_restday']
     all_values=[]
     for d in [day,5]:
         for p in selected:
@@ -266,7 +266,7 @@ def daily(traces,theme,narrow,field=1,kind='fixed'):
         for p in selected:
             x,y=aggregate(traces[('base',kind,p)],d,field)
             if field==4:y=y*1000
-            ax.plot(x,y,color=card.color(p),lw=(2.16 if p!='always' else 1.44),ls=(0,(6,3)) if p=='manual' else ':' if p=='always' else '-',zorder=4 if p=='manual' else 3 if p=='cut_all' else 1)
+            ax.plot(x,y,color=card.color(p),lw=(2.16 if p!='always' else 1.44),ls=(0,(6,3)) if p=='precool_restday' else ':' if p=='always' else '-',zorder=4 if p=='precool_restday' else 3 if p=='cut_all' else 1)
             tails.append(float(y[-1]))
         gap=(card.body*1.25)/(rect[3]*card.H)*(yl[1]-yl[0])
         positions=dodge(tails,yl[0]+gap*.8,yl[1]-gap*.8,gap)
@@ -302,8 +302,8 @@ def restday(mc,theme,narrow):
     card.text(.07,.735-.17,'断电时，壁挂风扇也停转',26 if narrow else 22,bold=True)
     rect=[.29,.29,.57,.23] if narrow else [.48,.29,.37,.38]
     ax=card.ax(rect,grid=False);ax.set_ylim(1.9 if narrow else 1.5,-.5);ax.set_yticks([])
-    xhi=max(q(mc[(mc.kind=='fixed')&(mc.policy==p)].rest_peak_C)[-1] for p in ['cut_all','manual']);ax.set_xlim(20,xhi+2);ax.set_xticks([20,30,40])
-    for i,p in enumerate(['cut_all','manual']):
+    xhi=max(q(mc[(mc.kind=='fixed')&(mc.policy==p)].rest_peak_C)[-1] for p in ['cut_all','precool_restday']);ax.set_xlim(20,xhi+2);ax.set_xticks([20,30,40])
+    for i,p in enumerate(['cut_all','precool_restday']):
         vals=mc[(mc.kind=='fixed')&(mc.policy==p)].rest_peak_C;lo,mid,hi=card.interval(ax,vals,i,p)
         ax.text(-.08,i,SHORT[p],transform=ax.get_yaxis_transform(),ha='right',va='center',color=card.t['ink'],fontproperties=card.prop(card.body,bold=True))
         ax.text(mid,i+(.36 if narrow else .20),f'{mid:.1f} [{lo:.1f}–{hi:.1f}]',ha='center',va='top',color=card.t['muted'],fontproperties=card.prop(card.body,mono=True))
@@ -312,13 +312,13 @@ def restday(mc,theme,narrow):
 
 
 def policies(mc,theme,narrow,kind='fixed'):
-    a=q(paired(mc,kind,'manual','energy_kWh'))[2];heat=-q(paired(mc,kind,'manual','occupied_degree_hours'))[2]
-    title=f'自己开关空调比强制断电，每季多用约{a:.0f}度、少受热约{heat:.0f}℃·时'
+    a=q(paired(mc,kind,'precool_restday','energy_kWh'))[2];heat=-q(paired(mc,kind,'precool_restday','occupied_degree_hours'))[2]
+    title=f'预冷方案一季多用约{a:.0f}度，少受热约{heat:.0f}℃·时'
     note='非顶层、单面外墙、西向±30°；128个配对情景。横纵细线分别为5–95%情景范围，不是联合置信区间。受热按人在室内超过28度的幅度×时长。'
     if narrow:note='非顶层·西向±30°。细线各为5–95%情景范围，不是联合置信区间；受热按℃·小时计。浅折线连接中位数前沿。'
     card=Card(title,theme,narrow,'05 / 规则的取舍' if kind=='fixed' else '附04 / 变频规则取舍',note,kind)
-    choices=['always','cut_all','manual','cut_workday','setback30','auto_restore']
-    if narrow:choices=['always','cut_all','manual','cut_workday']
+    choices=['always','cut_all','precool_restday','cut_workday','setback30','auto_restore','manual']
+    if narrow:choices=['always','cut_all','precool_restday','manual']
     data=[]
     for p in choices:
         sub=mc[(mc.kind==kind)&(mc.policy==p)]
@@ -337,23 +337,28 @@ def policies(mc,theme,narrow,kind='fixed'):
     gap=card.body*1.35/(.43*card.H)*(ax.get_ylim()[1]-ax.get_ylim()[0])
     locations=dodge(targets,0,ymax*.92,gap)
     for (p,x,y),ly in zip(data,locations):
-        color=card.color(p);alpha=.85 if p in ['cut_all','manual'] else .40
+        color=card.color(p);alpha=.85 if p in ['cut_all','precool_restday'] else .40
         ax.plot([x[0],x[-1]],[y[2],y[2]],color=color,lw=1.44,alpha=alpha)
         ax.plot([x[2],x[2]],[y[0],y[-1]],color=color,lw=1.44,alpha=alpha)
-        ax.plot(x[2],y[2],marker='D' if p=='manual' else 'o',ms=11.5 if p in ['cut_all','manual'] else 10,mfc=color,mec=card.t['bg'],mew=1.1,ls='none',zorder=5)
+        ax.plot(x[2],y[2],marker='D' if p=='precool_restday' else 'o',ms=11.5 if p in ['cut_all','precool_restday'] else 10,mfc=color,mec=card.t['bg'],mew=1.1,ls='none',zorder=5)
         lx=xmax*1.03
         ax.plot([x[2]+xmax*.01,lx-xmax*.02],[y[2],ly],color=card.t['muted'],lw=.55,alpha=.7)
-        ax.text(lx,ly,SHORT[p],va='center',color=card.t['ink'] if p in ['cut_all','manual'] else card.t['muted'],fontproperties=card.prop(card.body,bold=p in ['cut_all','manual']))
+        ax.text(lx,ly,SHORT[p],va='center',color=card.t['ink'] if p in ['cut_all','precool_restday'] else card.t['muted'],fontproperties=card.prop(card.body,bold=p in ['cut_all','precool_restday']))
     card.labels(ax,x='整个制冷季的空调电量 / 度')
     return card
 
 
 def sensitivity(sobol,theme,narrow):
-    s=sobol[(sobol.kind=='fixed')&(sobol.output=='saving_kWh')].nlargest(5 if narrow else 8,'ST').sort_values('ST',ascending=False)
+    candidates=sobol[(sobol.kind=='fixed')&(sobol.output=='saving_kWh')]
+    s=candidates.nlargest(5 if narrow else 8,'ST')
+    if 'precool_minutes' not in set(s.parameter):
+        import pandas as pd
+        s=pd.concat([s.iloc[:-1],candidates[candidates.parameter=='precool_minutes']])
+    s=s.sort_values('ST',ascending=False)
     top=s.iloc[0]
-    title=f'西向房间的炎热周里，{top.label}最影响节电'
-    note='定频，深圳炎热周，非顶层、单面外墙、西向±30°。26个未定输入；细线为重采样95%区间。含交互，不是整季排名。'
-    if narrow:note='非顶层·西向±30°·炎热周·26个输入。\n细线：重采样95%区间，非整季排名。'
+    title=f'西向炎热周里，{top.label}最影响预冷方案用电增量'
+    note='定频，深圳炎热周，非顶层、单面外墙、西向±30°。27个未定输入；比较预冷方案减现行电量，细线为重采样95%区间。含交互；列主要输入及预冷提前量，不是整季排名。'
+    if narrow:note='非顶层·西向±30°·炎热周·27个输入。\n主要输入及预冷提前量；细线为重采样95%区间。'
     card=Card(title,theme,narrow,'06 / 哪些条件更重要',note)
     ax=card.ax([.30 if narrow else .23,.27,.41 if narrow else .49,.46],grid=False)
     ax.set_ylim(len(s)-.5,-.5);ax.set_xlim(0,max(s.ST_high)*1.05);ax.set_yticks([]);ax.xaxis.set_major_locator(ticker.MaxNLocator(3 if narrow else 4));ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda v,p:f'{v:.2f}'))
@@ -364,20 +369,20 @@ def sensitivity(sobol,theme,narrow):
         ax.plot(r.ST,i,'o',ms=10,color=color,mec=card.t['bg'],mew=1)
         ax.text(-.05,i,r.label,transform=ax.get_yaxis_transform(),ha='right',va='center',color=card.t['ink'] if i<3 else card.t['muted'],fontproperties=card.prop(card.body,bold=i<3))
         ax.text(1.06,i,f'{r.ST:.2f}\n[{r.ST_low:.2f}–{r.ST_high:.2f}]' if narrow else f'{r.ST:.2f} [{r.ST_low:.2f}–{r.ST_high:.2f}]',transform=ax.get_yaxis_transform(),va='center',color=card.t['ink'] if i<3 else card.t['muted'],fontproperties=card.prop(26 if narrow else 20,mono=True))
-    card.labels(ax,x='对节电量的总效应指数')
+    card.labels(ax,x='对预冷方案额外用电的总效应指数')
     return card
 
 
 def rooms(mc,theme,narrow):
-    title='房间约23–30平方米，自己开关都比强制断电多用电'
-    note='定频，非顶层、单面外墙、西向±30°，四人同机组。点和细线为自己开关相对现行规定多用电量的中位数与5–95%情景范围，非置信区间。'
+    title='房间约23–30平方米，预冷方案都比强制断电多用电'
+    note='定频，非顶层、单面外墙、西向±30°，四人同机组。点和细线为预冷方案相对现行规定多用电量的中位数与5–95%情景范围，非置信区间。'
     if narrow:note='非顶层·西向±30°·四人·同机组。点与细线为配对差值的中位数及5–95%情景范围，不是置信区间。'
     card=Card(title,theme,narrow,'07 / 尺寸对照',note)
     rows=[]
     for room,label in ROOMS.items():
-        sub=mc[mc.room==room];values=paired(sub,'fixed','manual','energy_kWh')
-        rows.append(('manual',({'base':'23㎡基准','tile80':'27㎡对照','upper':'30㎡上限'}[room] if narrow else label.replace('·0.8米砖','').replace('口述上限','上限')),values,None))
-    dots_card(card,rows,'自己开关比现行规定多用 / 度')
+        sub=mc[mc.room==room];values=paired(sub,'fixed','precool_restday','energy_kWh')
+        rows.append(('precool_restday',({'base':'23㎡基准','tile80':'27㎡对照','upper':'30㎡上限'}[room] if narrow else label.replace('·0.8米砖','').replace('口述上限','上限')),values,None))
+    dots_card(card,rows,'预冷方案比现行规定多用 / 度')
     return card
 
 

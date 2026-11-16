@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="readme-assets/cover-en-dark.png">
-  <img src="readme-assets/cover-en-light.png" alt="Let people switch the AC, or cut the power on schedule? Cut even on summer weekends, rooms reach about 91°F; switching it yourself costs only 72 kWh more a season." width="100%">
+  <img src="readme-assets/cover-en-light.png" alt="Pre-cool before people get back? Still cut the power on weekends? Pre-cooling and weekend power cost 82 kWh more a season; arrival 85°F to 80°F, weekend peak 91°F to 83°F." width="100%">
 </picture>
 
 <p align="center">
@@ -23,19 +23,20 @@
   <a href="README.md">简体中文</a> · <b>English</b>
 </p>
 
-# Dorm air conditioning: self-switching vs. scheduled power cuts, energy use and indoor heat and humidity
+# Dorm air conditioning: pre-cooling and rest-day power vs. scheduled power cuts, energy use and indoor heat and humidity
 
-This project compares two power rules for a four-person factory dormitory room in southern China: cutting power to the whole room during working hours (rest days included), and supplying power all day while occupants switch the air conditioner themselves. A minute-step model with a three-node thermal network and a humidity node computes air-conditioning energy and indoor temperature and humidity over one cooling season (184 days) for 128 paired parameter scenarios.
+This project compares two power rules for a four-person factory dormitory room in southern China. The current rule cuts power to the whole room during working hours, applies the same schedule on rest days, and requires occupants to switch the air conditioner back on by hand. The alternative pre-cools the room on workdays by starting the unit ahead of the lunch and evening returns, and keeps power on during rest days. A minute-step model with a three-node thermal network and a humidity node computes air-conditioning energy and indoor temperature and humidity over one cooling season (184 days) for 128 paired parameter scenarios.
 
 ## Main results
 
-**The two rules differ mainly on rest days and after work, when occupants are in the room but the power is cut; on workdays their energy use is essentially the same.**
+**The energy difference comes mainly from rest days: about 0.1 kWh per workday and 1.3 kWh per rest day. In return, indoor temperature on arrival and during occupied rest-day hours drops markedly.**
 
-- Workdays: median difference in daily energy, 0.03 kWh.
-- Season: with a fixed-speed unit, self-switching uses **72 kWh** more than the scheduled cut (43–123); with an inverter unit, 56 kWh (35–90).
-- Rest days: under the scheduled cut, the season peak indoor temperature during occupied hours is **91°F** (32.9°C; 87–98°F).
+- Season energy: pre-cooling with rest-day power uses **82 kWh** more than the current rule (51–160, fixed-speed); 62 kWh with an inverter unit (37–117).
+- Indoor temperature on arrival after work: **85°F → 80°F** (29.4°C → 26.6°C); median time to reach 28°C falls from 29 to 4 minutes.
+- Season peak indoor temperature during occupied rest-day hours: **91°F → 83°F** (32.9°C → 28.2°C).
+- Occupied heat exposure (degrees above 28°C times hours) falls by 449 °C·h (47–1253).
 
-Basis: median (5–95% scenario range) over 128 paired parameter samples (west-facing ±30°, second floor not top, one exterior wall); three room sizes, two unit types and seven rules share occupancy calendars and weather. Ranges reflect parameter uncertainty, not confidence intervals.
+Basis: median (5–95% scenario range), fixed-speed unit; 128 paired parameter samples (west-facing ±30°, second floor not top, one exterior wall) with shared occupancy calendars and weather. Pre-cooling lead time 30 minutes in the base case, 10–60 minutes across scenarios. Ranges reflect parameter uncertainty, not confidence intervals.
 
 ## Study object
 
@@ -60,7 +61,8 @@ Net room size 3.70 × 6.20 × 2.80 m: a 2.10 m desk-and-loft unit at each end an
 
 - Geometry and components: dimensions, furniture and openings as described above; balcony facing west (270° ±30°).
 - Heat and moisture model: three thermal nodes (air; interior walls and furniture; exterior wall and roof) plus air humidity and coil water; exterior surface heat balance follows the EnergyPlus Engineering Reference<sup>[[1]](#references)</sup>, psychrometric properties follow<sup>[[3]](#references)[[10]](#references)[[11]](#references)</sup>; one-minute integration driven by hourly weather<sup>[[4]](#references)[[5]](#references)</sup>, solar position by the NOAA algorithm<sup>[[8]](#references)</sup>.
-- Power and occupancy: four cuts a day (08:00–10:30, 10:40–12:00, 13:30–15:00, 15:10–17:30); after power returns the unit must be switched on by hand, and the room is unoccupied during the two 10-minute workday windows.
+- Current rule: four cuts a day, rest days included (08:00–10:30, 10:40–12:00, 13:30–15:00, 15:10–17:30); after power returns the unit must be switched on by hand, and the room is unoccupied during the two 10-minute workday windows.
+- Alternative: on workdays the unit starts ahead of the lunch and evening returns and is switched off on leaving at 08:00 and 13:30; the 10-minute windows stay unused; on rest days power stays on and the unit runs while occupied.
 - Units: fixed-speed and inverter, with minimum on/off times, part-load efficiency and coil dehumidification<sup>[[2]](#references)</sup>.
 - Surface film resistance and coating solar absorptance ranges follow the ASHRAE Handbook and EPA AP-42<sup>[[6]](#references)[[7]](#references)</sup>; parameter values, sources and assumed ranges: [Model &amp; sources](模型与来源.md) (Chinese).
 - Sensitivity: Sobol global sensitivity analysis with Saltelli sampling and SALib estimators<sup>[[12]](#references)[[13]](#references)</sup>.
@@ -93,7 +95,7 @@ During the short workday power windows the room is unoccupied and the unit stays
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/04_休息日_暗_窄.svg">
   <source media="(max-width: 600px)" srcset="figures/04_休息日_亮_窄.svg">
   <source media="(prefers-color-scheme: dark)" srcset="figures/04_休息日_暗.svg">
-  <img src="figures/04_休息日_亮.svg" alt="On rest days with people in the room, the season peak is about 32.9 °C" width="830">
+  <img src="figures/04_休息日_亮.svg" alt="Under the current rule, the season peak during occupied rest-day hours is about 32.9 °C" width="830">
 </picture>
 
 ### Energy and heat exposure by rule
@@ -102,7 +104,7 @@ During the short workday power windows the room is unoccupied and the unit stays
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/05_规则取舍_暗_窄.svg">
   <source media="(max-width: 600px)" srcset="figures/05_规则取舍_亮_窄.svg">
   <source media="(prefers-color-scheme: dark)" srcset="figures/05_规则取舍_暗.svg">
-  <img src="figures/05_规则取舍_亮.svg" alt="Switching it yourself: about 72 kWh more per season, about 406 °C·h less heat exposure" width="830">
+  <img src="figures/05_规则取舍_亮.svg" alt="Pre-cooling: about 82 kWh more per season, about 449 °C·h less heat exposure" width="830">
 </picture>
 
 ### Sensitivity
@@ -111,13 +113,13 @@ During the short workday power windows the room is unoccupied and the unit stays
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="figures/06_影响因素_暗_窄.svg">
   <source media="(max-width: 600px)" srcset="figures/06_影响因素_亮_窄.svg">
   <source media="(prefers-color-scheme: dark)" srcset="figures/06_影响因素_暗.svg">
-  <img src="figures/06_影响因素_亮.svg" alt="In a hot week for a west-facing room, ventilation affects savings the most" width="830">
+  <img src="figures/06_影响因素_亮.svg" alt="In a hot week for a west-facing room, ventilation drives the energy increase of pre-cooling the most" width="830">
 </picture>
 
 ## Limitations
 
 - The model is not calibrated against on-site energy or temperature/humidity measurements, nor cross-checked against EnergyPlus or similar tools; results hold under the modelled boundary conditions.
-- Ventilation rate, floor position (treated as not the top floor) and unit performance curves are assumptions. In the sensitivity analysis, ventilation has the largest effect on savings, followed by rated efficiency.
+- Ventilation rate, floor position (treated as not the top floor) and unit performance curves are assumptions. In the sensitivity analysis, the energy increase is most sensitive to ventilation, followed by rated efficiency, wall heat transfer and pre-cooling lead time.
 - Top-floor and corner rooms show markedly larger differences; see the comparison tables in the Chinese README.
 
 ## Reproduction

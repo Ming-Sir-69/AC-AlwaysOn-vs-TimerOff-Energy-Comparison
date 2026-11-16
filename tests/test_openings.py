@@ -28,7 +28,7 @@ def test_metal_branch_is_opaque_and_energy_is_accounted():
 
 def test_first_24_uncertain_inputs_keep_the_published_random_pairing():
  np.testing.assert_array_equal(scenario_units(128)[:,:24],np.random.default_rng(SEED).random((128,24)))
- assert scenario_units(128).shape==(128,28)
+ assert scenario_units(128).shape==(128,29)
 
 
 def test_corner_solar_weights_exclude_glass_metal_and_frames():
@@ -55,3 +55,7 @@ def test_scene_parameters_and_thermal_geometry_agree():
  glass=2*(o['window_width']-o['window_frame'])*(o['window_height']-o['window_frame'])
  glass+=(o['balcony_width']-2*o['leaf_frame'])*(o['balcony_height']-o['leaf_frame']-o['balcony_height']*o['balcony_split_fraction']-o['balcony_crossbar']/2)
  assert np.isclose(p.window_area,glass)
+
+
+def test_original_metal_draws_preserved_when_adding_precool():
+ np.testing.assert_array_equal(scenario_units(128)[:,24:28],np.random.default_rng(SEED+2).random((128,4)))

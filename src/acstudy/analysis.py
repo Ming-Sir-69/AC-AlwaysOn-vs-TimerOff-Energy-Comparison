@@ -17,11 +17,11 @@ BOUNDS = {
     'evening_return_minutes':(0.,60.),'lunch_arrival_minutes':(0.,15.),
     'manual_delay_minutes':(0.,5.),'g_mass':(200.,800.),
     'u_metal':(3.,7.),'metal_absorptance':(.50,.90),
-    'u_frame':(3.,7.),'frame_absorptance':(.30,.75)}
+    'u_frame':(3.,7.),'frame_absorptance':(.30,.75),'precool_minutes':(10.,60.)}
 LABELS = ['墙体传热','换气','建筑内蓄热','四套家具蓄热','朝向','额定能效',
           '制冷能力','室外温度','午休返回概率','盘管温度','盘管风量','启动爬升',
           '设定温度','顶层情景','转角情景','玻璃太阳得热','净宽','净长','净高',
-          '玻璃门窗面积','下班返回延迟','午休返回延迟','手动开机反应','室内热耦合','金属门传热','金属门太阳吸收','门窗框传热','门窗框太阳吸收']
+          '玻璃门窗面积','下班返回延迟','午休返回延迟','手动开机反应','室内热耦合','金属门传热','金属门太阳吸收','门窗框传热','门窗框太阳吸收','预冷提前量']
 ROOM_AREAS={'base':22.94,'tile80':26.66,'upper':29.76}
 
 
@@ -35,8 +35,8 @@ def sobol_indices(a,b,c):
 def scenario_units(n):
     # Keep the original 24 unresolved-input draws paired across geometry changes.
     original=np.random.default_rng(SEED).random((n,24))
-    extra=np.random.default_rng(SEED+2).random((n,len(BOUNDS)-24))
-    return np.column_stack([original,extra])
+    extra=np.random.default_rng(SEED+2).random((n,4))
+    return np.column_stack([original,extra,np.random.default_rng(SEED+3).random(n)])
 
 
 def parameters_from_unit(row,room='base'):
@@ -58,14 +58,13 @@ def recovery_times(a, p, dt=60., humidity=True):
         good = (a[begin:end,1]<=28.)
         if humidity: good &= (a[begin:end,5]<=65.)
         duration = int(1800/dt)
-        found = False
-        for j in range(max(0,len(good)-duration+1)):
-            if good[j:j+duration].all():
-                values.append(j*dt/60.)
-                events.append(True)
-                found=True
-                break
-        if not found:
+        # Exact rolling count replaces the minute-by-minute Python search.
+        counts=np.r_[0,np.cumsum(good,dtype=np.int64)]
+        matches=np.flatnonzero(counts[duration:]-counts[:-duration]==duration) if len(good)>=duration else np.empty(0,dtype=int)
+        if len(matches):
+            values.append(matches[0]*dt/60.)
+            events.append(True)
+        else:
             values.append((end-begin)*dt/60.)
             events.append(False)
     return np.asarray(values),np.asarray(events)
@@ -155,6 +154,19 @@ def monte_carlo(frames,metas,n=128,progress=print):
     return pd.DataFrame(rows)
 
 
+def sobol_sample(args):
+    u,frame,meta,parameter_factory=args
+    p=parameter_factory(u)
+    w=forcing_for_parameters(frame,meta,p)
+    each=[];balance=[]
+    for kind in ['fixed','inverter']:
+        a=metrics(simulate(w,p,kind,'precool_restday'),p)
+        b=metrics(simulate(w,p,kind,'cut_all'),p)
+        each.extend([a['energy_kWh']-b['energy_kWh'],b['occupied_degree_hours']-a['occupied_degree_hours']])
+        balance.extend([a['enthalpy_residual_max_W'],b['enthalpy_residual_max_W']])
+    return each,max(balance)
+
+
 def sobol_analysis(frame,meta,n=512,progress=print,*,bounds=None,labels=None,parameter_factory=None):
     """Saltelli first order + Jansen total order; paired bootstrap intervals.
 
@@ -172,21 +184,15 @@ def sobol_analysis(frame,meta,n=512,progress=print,*,bounds=None,labels=None,par
     blocks=[aa,bb]+[np.column_stack([bb[:,j] if j==i else aa[:,j] for j in range(d)]) for i in range(d)]
     all_y=[]
     balance=[]
+    from concurrent.futures import ProcessPoolExecutor
+    pool=ProcessPoolExecutor(max_workers=4)
     for ib,block in enumerate(blocks):
-        ys=[]
-        for u in block:
-            p=parameter_factory(u)
-            w=forcing_for_parameters(frame,meta,p)
-            each=[]
-            for kind in ['fixed','inverter']:
-                a=metrics(simulate(w,p,kind,'always'),p)
-                b=metrics(simulate(w,p,kind,'cut_all'),p)
-                each.extend([a['energy_kWh']-b['energy_kWh'],
-                             b['occupied_degree_hours']-a['occupied_degree_hours']])
-                balance.append(max(a['enthalpy_residual_max_W'],b['enthalpy_residual_max_W']))
-            ys.append(each)
+        evaluated=list(pool.map(sobol_sample,((u,frame,meta,parameter_factory) for u in block),chunksize=8))
+        ys=[result[0] for result in evaluated]
+        balance.extend(result[1] for result in evaluated)
         all_y.append(np.array(ys))
         progress(f'Sensitivity: block {ib+1}/{len(blocks)}')
+    pool.shutdown()
     ya,yb=all_y[:2]
     rng=np.random.default_rng(SEED+1)
     indices=[np.arange(n)]+[rng.integers(0,n,n) for _ in range(256)]

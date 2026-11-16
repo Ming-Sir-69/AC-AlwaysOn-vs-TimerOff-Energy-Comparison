@@ -79,6 +79,8 @@ class Parameters:
     u_frame: float = 5.7
     frame_absorptance: float = .48
 
+    precool_minutes: float = 30.
+
     def vector(self):
         return np.array(list(asdict(self).values()), dtype=float)
 
@@ -157,6 +159,9 @@ def schedule(hour, day, policy, p):
         allowed = weekend or not cut or 11. <= hour < 12. or 16.5 <= hour < 17.5
     elif policy == 4 and presence == 0.:
         target = max(30.,target)
+    if policy == 7:
+        precool = (not weekend and ((LUNCH_CALENDAR[day%366] < p[43] and lunch_arrival-p[65]/60. <= hour < 13.5) or arrival-p[65]/60. <= hour < 24.))
+        allowed = weekend or not cut or precool
     return allowed,presence,target
 
 
@@ -174,6 +179,8 @@ def manual_ready(hour,day,policy,p):
         if hour>=17.5:return hour>=17.5+delay
         return False
     if hour<8.:return True
+    if policy==7:
+        return ((LUNCH_CALENDAR[day%366]<p[43] and 12.+(p[54]-p[65])/60.<=hour<13.5) or hour>=17.5+(p[53]-p[65])/60.)
     if 12.+p[54]/60.<=hour<13.5:
         return hour>=12.+(p[54]+p[55])/60. and LUNCH_CALENDAR[day%366]<p[43]
     return hour>=17.5+(p[53]+p[55])/60.
@@ -352,7 +359,7 @@ COLUMNS = ['hour','air_C','mass_C','wall_C','humidity_kgkg','RH_pct',
            'power_available','occupied','compressor_fraction','dynamic_SHR',
            'coil_water_kg','coil_evaporation_kgs','coil_drain_kgs','coil_water_residual_kgs',
            'compressor_on','compressor_start','command_fraction','runtime_fraction']
-POLICIES = ['always','cut_all','cut_workday','early60','setback30','manual','auto_restore']
+POLICIES = ['always','cut_all','cut_workday','early60','setback30','manual','auto_restore','precool_restday']
 
 
 def simulate(weather, parameters=Parameters(), kind='inverter', policy='always',

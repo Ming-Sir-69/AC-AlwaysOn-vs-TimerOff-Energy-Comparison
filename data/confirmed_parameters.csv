@@ -1,7 +1,7 @@
 parameter,baseline,range,source,sampled,treatment
-area,22.94,20.88–28.16；基准22.2，0.8m砖对照25.8，口述上限28.8,净宽乘净长，均非实测；对照长6m，宽分别4.3/4.8m,True,由几何/材料输入派生，已传播
+area,22.94,21.60–28.16；基准22.94，对照26.66/29.76,净宽乘净长，均非实测；对照长6.2m，宽分别4.3/4.8m,True,由几何/材料输入派生，已传播
 height,2.8,2.6–3.2,假设；基准2.8m,True,独立均匀情景输入
-wall_area,7.049087499999999,width*height-window_area；转角另加length*height,场景几何与明确热学假设；详见data/openings_geometry.json,True,由几何/材料输入派生，已传播
+wall_area,7.049087499999999,width*height-Aglass-Ametal-Aframe；转角另加length*height,场景几何与明确热学假设；详见data/openings_geometry.json,True,由几何/材料输入派生，已传播
 roof_area,0.0,0或实际地面积,非顶层/顶层替代情景；与地面积绑定，不独立抽样面积,True,由几何/材料输入派生，已传播
 window_area,1.902075,1.6–2.4,场景几何与明确热学假设；详见data/openings_geometry.json,True,独立均匀情景输入
 u_wall,2.0,0.8–3.2,假设：缺少实测或机组型号,True,独立均匀情景输入
@@ -64,3 +64,4 @@ u_metal,5.7,3.0–7.0,深色铝合金板及混合门窗框的未测假设；量�
 metal_absorptance,0.7,0.5–0.9,深色铝合金板及混合门窗框的未测假设；量级参考与边界见data/openings_geometry.json,True,独立均匀情景输入
 u_frame,5.7,3.0–7.0,深色铝合金板及混合门窗框的未测假设；量级参考与边界见data/openings_geometry.json,True,独立均匀情景输入
 frame_absorptance,0.48,0.3–0.75,深色铝合金板及混合门窗框的未测假设；量级参考与边界见data/openings_geometry.json,True,独立均匀情景输入
+precool_minutes,30,10–60分钟,规则情景假设，非实测；午休返回日和下班到家前定时开机,True,独立均匀情景输入；原28列抽样保留

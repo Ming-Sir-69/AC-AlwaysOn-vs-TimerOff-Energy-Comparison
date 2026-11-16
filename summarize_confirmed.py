@@ -14,14 +14,28 @@ def summarize():
     def add(part,label):
      for kind in ['fixed','inverter']:
       cur=part[(part.kind==kind)&(part.policy=='cut_all')]
-      extra=paired_values(part,kind,'manual','energy_kWh')
-      work=paired_values(part,kind,'manual','workday_kWh')
-      rest=paired_values(part,kind,'manual','restday_kWh')
+      extra=paired_values(part,kind,'precool_restday','energy_kWh')
+      work=paired_values(part,kind,'precool_restday','workday_kWh')
+      rest=paired_values(part,kind,'precool_restday','restday_kWh')
       assert np.abs(extra-132*work-52*rest).max()<1e-8
       row=dict(case=label,kind=kind,n=len(cur))
-      fields={'saving_pct':cur.saving_pct,'manual_extra_kWh':extra,'extra_workday_kWh':work,'extra_restday_kWh':rest,'rest_peak_C':cur.rest_peak_C,
-       'current_energy_kWh':cur.energy_kWh,'manual_energy_kWh':part[(part.kind==kind)&(part.policy=='manual')].energy_kWh,
-       'heat_reduced_degree_hours':-paired_values(part,kind,'manual','occupied_degree_hours')}
+      pre=part[(part.kind==kind)&(part.policy=='precool_restday')]
+      fields={'precool_rest_peak_F':pre.rest_peak_C*1.8+32,'current_rest_peak_F':cur.rest_peak_C*1.8+32,
+       'precool_minus_always_kWh':paired_values(part,kind,'precool_restday','energy_kWh',reference='always'),
+       'precool_saving_pct':pre.saving_pct,'precool_hot_degree_hours':pre.occupied_degree_hours,'current_hot_degree_hours':cur.occupied_degree_hours,
+       'precool_temperature_unmet_30min':pre.temperature_unmet_30min,'current_temperature_unmet_30min':cur.temperature_unmet_30min,
+       'precool_joint_unmet_90min':pre.joint_unmet_90min,'current_joint_unmet_90min':cur.joint_unmet_90min,
+       'saving_pct':cur.saving_pct,'precool_extra_kWh':extra,'extra_workday_kWh':work,'extra_restday_kWh':rest,'rest_peak_C':cur.rest_peak_C,
+       'current_energy_kWh':cur.energy_kWh,'precool_energy_kWh':part[(part.kind==kind)&(part.policy=='precool_restday')].energy_kWh,
+       'precool_rest_peak_C':part[(part.kind==kind)&(part.policy=='precool_restday')].rest_peak_C,
+       'precool_return_C':part[(part.kind==kind)&(part.policy=='precool_restday')].return_C,
+       'current_return_C':cur.return_C,
+       'precool_recovery_min':part[(part.kind==kind)&(part.policy=='precool_restday')].temperature_recovery_median_min,
+       'current_recovery_min':cur.temperature_recovery_median_min,
+       'precool_joint_recovery_min':part[(part.kind==kind)&(part.policy=='precool_restday')].recovery_median_min,
+       'current_joint_recovery_min':cur.recovery_median_min,
+       'precool_vs_manual_kWh':paired_values(part,kind,'precool_restday','energy_kWh',reference='manual'),
+       'heat_reduced_degree_hours':-paired_values(part,kind,'precool_restday','occupied_degree_hours')}
       for metric,vals in fields.items():
        for suffix,val in zip(['p05','p50','p95'],np.quantile(vals,[.05,.5,.95])):row[metric+'_'+suffix]=float(val)
       rows.append(row)
@@ -40,9 +54,9 @@ def summarize():
     assert westc.p_topfloor.eq(0).all() and westc.p_corner.eq(0).all()
     n=len(westc)
     assert westc.groupby('station').size().to_dict()=={'guangzhou':n//2,'shenzhen':n//2}
-    assert len(mc)==60*n and mc.energy_kWh.gt(0).all()
+    assert len(mc)==72*n and mc.energy_kWh.gt(0).all()
     summary={'cases':rows,'seasonal_trajectories':len(mc),'west_trajectories':int((mc.building_case=='west').sum()),'paired_controls_checked':True,'workday_restday_energy_identity_checked':True,'max_enthalpy_residual_W':float(mc.enthalpy_residual_max_W.max()),'building_facts':'floor2; single exterior balcony facade; west confirmed; non-topfloor assumed because total floors unknown','fields':'p05,p50,p95 are scenario quantiles, not confidence intervals'}
     (ROOT/'results/confirmed_summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
-    print(pd.DataFrame(rows)[['case','kind','n','saving_pct_p50','manual_extra_kWh_p05','manual_extra_kWh_p50','manual_extra_kWh_p95','rest_peak_C_p50','extra_restday_kWh_p50']].to_string(index=False),flush=True)
+    print(pd.DataFrame(rows)[['case','kind','n','saving_pct_p50','precool_extra_kWh_p05','precool_extra_kWh_p50','precool_extra_kWh_p95','rest_peak_C_p50','extra_restday_kWh_p50']].to_string(index=False),flush=True)
 
 if __name__=='__main__':summarize()

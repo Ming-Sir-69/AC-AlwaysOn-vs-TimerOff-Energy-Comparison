@@ -34,9 +34,9 @@
   },
   "reused_rows": 0,
   "fingerprints": {
-    "src/acstudy/model.py": "ed030aad74d4b2f46f3818d3588f2ca8843114e2ecc5fafbf64c61383262004f",
+    "src/acstudy/model.py": "f8fc106b5471fcbc647d07d0686deca842a10f37ef0e1518929f6b7b5567ea89",
     "src/acstudy/weather.py": "194ef35a59c9891ced7be2f3231e719b6164b68fafe193817b96cdab355d86f4",
-    "src/acstudy/analysis.py": "0e0b839b9c2bd6b37d9e27eaf4f7b0775a4c1226520d6d15964363e5e6d7eae5",
+    "src/acstudy/analysis.py": "cfaa6b30e6adc6c3ffbb96662cc3cb6a9c19b569e35473a01060a42c4401382a",
     "src/acstudy/confirmed.py": "9beee7b26b8187765ec6bdd302fcb89faeefb6a0105fa599a9509fe3ea493089",
     "data/CHN_Guangdong.Shenzhen.594930_SWERA.epw": "3f99b7d5f279f4dc1d050e26d6d54b23294f6c73be4089b49072bd612fb4fce6",
     "data/CHN_Guangdong.Guangzhou.592870_CSWD.epw": "8aba1405cf372b1266858ed2455d3b45d43a20315f9e450e72373d5a70b4a026"
@@ -106,12 +106,13 @@
     "u_metal": 5.7,
     "metal_absorptance": 0.7,
     "u_frame": 5.7,
-    "frame_absorptance": 0.48
+    "frame_absorptance": 0.48,
+    "precool_minutes": 30.0
   },
-  "n_parameters": 26,
-  "mc_trajectories": 7680,
-  "west_trajectories": 5376,
-  "control_trajectories": 2304,
+  "n_parameters": 27,
+  "mc_trajectories": 9216,
+  "west_trajectories": 6144,
+  "control_trajectories": 3072,
   "building_facts": {
     "floor": 2,
     "total_floors": null,
@@ -250,11 +251,16 @@
     "frame_absorptance": [
       0.3,
       0.75
+    ],
+    "precool_minutes": [
+      10.0,
+      60.0
     ]
   },
   "control_policies": [
     "always",
     "cut_all",
-    "manual"
+    "manual",
+    "precool_restday"
   ]
 }

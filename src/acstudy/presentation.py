@@ -1,6 +1,6 @@
 """Explicit reporting strata; do not mix unknown building facts into a headline."""
 STRATA = [(0,0,'非顶层、单面外墙（基准假设）'),(1,0,'顶层、单面外墙'),(0,1,'非顶层、转角两面外墙'),(1,1,'顶层、转角两面外墙')]
-PUBLIC_POLICIES = ['always','cut_all','cut_workday','setback30','manual','auto_restore']
+PUBLIC_POLICIES = ['always','cut_all','cut_workday','setback30','manual','auto_restore','early60','precool_restday']
 
 def baseline(mc):
     if 'building_case' in mc.columns:
