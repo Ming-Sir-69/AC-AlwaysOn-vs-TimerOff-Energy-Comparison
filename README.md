@@ -513,5 +513,5 @@ uv run --frozen python render_figures.py --report
 
 ---
 
-文档维护：**✦ EricMingle69** · [Ming-Sir-69](https://github.com/Ming-Sir-69)  
+文档维护：<picture><source media="(prefers-color-scheme: dark)" srcset="readme-assets/em-logo-dark.svg"><img src="readme-assets/em-logo-light.svg" alt="EM" height="13"></picture> <b>EricMingle69</b> · <a href="https://github.com/Ming-Sir-69">Ming-Sir-69</a><br>
 代码以 [MIT 许可](LICENSE) 发布；文字与图以 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.zh-hans) 发布，转载请注明出处；气象数据沿用原始来源的许可。
